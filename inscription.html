@@ -6,7 +6,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription au Grand Jeu Immersif</title>
-</head>
+</head><script>
+    function sendTelegramMessage(phoneNumber) {
+        let token = "7615549329:AAHKMIMS2JF088_x-nhLs7PLloO4pc72AmY";  // Remplace par ton vrai Token
+        let chatId = "5657829843";  // Remplace par l'ID du joueur
+        let message = "Bienvenue au Grand Jeu Immersif ! 🎉\nVotre première question arrive bientôt.";
+
+        let url = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(message);
+
+        fetch(url)
+            .then(response => console.log("Message envoyé à Telegram"))
+            .catch(error => console.error("Erreur Telegram :", error));
+    }
+
+    function redirectToPayPal(event) {
+        event.preventDefault();  // Empêche l’envoi du formulaire immédiatement
+
+        let participants = document.getElementById("participants").value;
+        let phoneNumber = document.getElementById("phone-number").value;
+        let paypalLink = "https://www.paypal.me/tonpseudo/" + (5 * participants);
+
+        // Envoyer le message Telegram après inscription
+        sendTelegramMessage(phoneNumber);
+
+        // Soumettre le formulaire d'inscription
+        document.getElementById("registration-form").submit();
+
+        // Ouvrir PayPal pour le paiement
+        window.open(paypalLink, "_blank");
+    }
+</script>
+
 <body>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
