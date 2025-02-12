@@ -32,7 +32,7 @@
         let participants = document.getElementById("participants").value;
         let totalPrice = 5 * participants; // Calcule le montant total
         let pseudo = encodeURIComponent("https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR"); // Encode le pseudo pour éviter le bug du "?"
-	let paypalLink = "https://www.paypal.me/https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR/" + totalPrice;
+	let paypalLink = "https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR/" + totalPrice + "EUR";
         alert("Montant à payer : " + totalPrice + " €"); // Affiche le montant en € avant de payer
 
         // Soumettre le formulaire pour envoyer les infos de l'inscription
