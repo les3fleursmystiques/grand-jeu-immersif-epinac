@@ -9,17 +9,41 @@
 </head>
 <body>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
+
     <form id="registration-form" method="post" action="https://formspree.io/your-email@example.com">
-        <label for="team-name">Nom de l'équipe :</label>
-        <input type="text" id="team-name" name="team_name" required><br><br>
+    <label for="team-name">Nom de l'équipe :</label>
+    <input type="text" id="team-name" name="team_name" required><br><br>
 
-        <label for="phone-number">Numéro de téléphone :</label>
-        <input type="tel" id="phone-number" name="phone_number" required><br><br>
+    <label for="phone-number">Numéro de téléphone :</label>
+    <input type="tel" id="phone-number" name="phone_number" pattern="^(\+33|0)[1-9]\d{8}$" required placeholder="Ex : 0612345678"><br><br>
+    <p style="color: red;"><strong>⚠ Le numéro de téléphone est obligatoire pour recevoir les questions du jeu.</strong></p>
 
-        <label for="participants">Nombre de participants :</label>
-        <input type="number" id="participants" name="participants" min="1" required><br><br>
+    <label for="participants">Nombre de participants :</label>
+    <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-        <button type="submit">S'inscrire</button>
+    <!-- BOUTON UNIQUE : INSCRIPTION + PAIEMENT PAYPAL -->
+    <button type="submit" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
+</form>
+
+<script>
+    function redirectToPayPal(event) {
+        event.preventDefault(); // Empêche l'envoi du formulaire immédiatement
+
+        let participants = document.getElementById("participants").value;
+        let totalPrice = 5 * participants; // Calcule le montant total
+        let paypalLink = "https://www.paypal.me/tonpseudo?amount=" + totalPrice + "&currency=EUR";
+
+        alert("Montant à payer : " + totalPrice + " €"); // Affiche le montant en € avant de payer
+
+        // Soumettre le formulaire pour envoyer les infos de l'inscription
+        document.getElementById("registration-form").submit();
+
+        // Ouvrir PayPal après l'inscription
+        window.open(paypalLink, "_blank");
+    }
+</script>
+
+</a>
     </form>
 </body>
 </html>
