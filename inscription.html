@@ -1,79 +1,66 @@
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription au Grand Jeu Immersif</title>
-</head><script>
-    function sendTelegramMessage(phoneNumber) {
-        let token = process.env.TELEGRAM_BOT_TOKEN;
-        let chatId = "5657829843";  // Remplace par l'ID du joueur
-        let message = "Bienvenue au Grand Jeu Immersif ! 🎉\nVotre première question arrive bientôt.";
-
-        let url = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(message);
-
-        fetch(url)
-            .then(response => console.log("Message envoyé à Telegram"))
-            .catch(error => console.error("Erreur Telegram :", error));
-    }
-
-    function redirectToPayPal(event) {
-        event.preventDefault();  // Empêche l’envoi du formulaire immédiatement
-
-        let participants = document.getElementById("participants").value;
-        let phoneNumber = document.getElementById("phone-number").value;
-        let paypalLink = "https://www.paypal.me/tonpseudo/" + (5 * participants);
-
-        // Envoyer le message Telegram après inscription
-        sendTelegramMessage(phoneNumber);
-
-        // Soumettre le formulaire d'inscription
-        document.getElementById("registration-form").submit();
-
-        // Ouvrir PayPal pour le paiement
-        window.open(paypalLink, "_blank");
-    }
-</script>
+</head>
 
 <body>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
-    <form id="registration-form" method="post" action="https://formspree.io/f/xqaeddrw">
-    <label for="team-name">Nom de l'équipe :</label>
-    <input type="text" id="team-name" name="team_name" required><br><br>
+    <form id="registration-form">
+        <label for="team-name">Nom de l'équipe :</label>
+        <input type="text" id="team-name" name="team_name" required><br><br>
 
-    <label for="phone-number">Numéro de téléphone :</label>
-    <input type="tel" id="phone-number" name="phone_number" pattern="^(\+33|0)[1-9]\d{8}$" required placeholder="Ex : 0612345678"><br><br>
-    <p style="color: red;"><strong>⚠ Le numéro de téléphone est obligatoire pour recevoir les questions du jeu.</strong></p>
+        <label for="phone-number">Numéro de téléphone :</label>
+        <input type="tel" id="phone-number" name="phone_number" pattern="^(\+33|0)[1-9]\d{8}$" required placeholder="Ex : 0612345678"><br><br>
+        <p style="color: red;"><strong>⚠ Le numéro de téléphone est obligatoire pour recevoir les questions du jeu.</strong></p>
 
-    <label for="participants">Nombre de participants :</label>
-    <input type="number" id="participants" name="participants" min="1" required><br><br>
+        <label for="participants">Nombre de participants :</label>
+        <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-    <!-- BOUTON UNIQUE : INSCRIPTION + PAIEMENT PAYPAL -->
-    <button type="submit" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
-</form>
-
-<script>
-    function redirectToPayPal(event) {
-        event.preventDefault(); // Empêche l'envoi du formulaire immédiatement
-
-        let participants = document.getElementById("participants").value;
-        let totalPrice = 5 * participants; // Calcule le montant total
-        let pseudo = encodeURIComponent("https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR"); // Encode le pseudo pour éviter le bug du "?"
-	let paypalLink = "https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR/" + totalPrice + "EUR";
-        alert("Montant à payer : " + totalPrice + " €"); // Affiche le montant en € avant de payer
-
-        // Soumettre le formulaire pour envoyer les infos de l'inscription
-        document.getElementById("registration-form").submit();
-
-        // Ouvrir PayPal après l'inscription
-        // window.open(paypalLink, "_blank");
-    }
-</script>
-
-</a>
+        <!-- BOUTON UNIQUE : INSCRIPTION + PAIEMENT PAYPAL -->
+        <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
     </form>
+
+    <script>
+        function sendTelegramMessage() {
+            let token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+	    let chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+
+            let teamName = document.getElementById("team-name").value;
+            let phoneNumber = document.getElementById("phone-number").value;
+            let participants = document.getElementById("participants").value;
+
+            let message = "📌 **Nouvelle Inscription !**\n\n"
+                + "👥 **Équipe** : " + teamName + "\n"
+                + "📞 **Téléphone** : " + phoneNumber + "\n"
+                + "🎟️ **Participants** : " + participants + "\n\n"
+                + "✅ Merci pour votre inscription ! Vous recevrez bientôt votre première question.";
+
+            let url = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(message) + "&parse_mode=Markdown";
+
+            return fetch(url)
+                .then(response => {
+                    console.log("Message Telegram envoyé");
+                })
+                .catch(error => console.error("Erreur Telegram :", error));
+        }
+
+        function redirectToPayPal(event) {
+            event.preventDefault();  // Empêche l’envoi du formulaire immédiatement
+
+            sendTelegramMessage().then(() => {
+                let participants = document.getElementById("participants").value;
+                let totalPrice = 5 * participants; // Calcule le montant total
+                let paypalLink = "https://www.paypal.me/LaurieBlanot/" + totalPrice;
+
+                alert("✅ Inscription validée ! Montant à payer : " + totalPrice + " €");
+                window.open(paypalLink, "_blank");  // Ouvrir PayPal
+            });
+        }
+    </script>
+
 </body>
 </html>
