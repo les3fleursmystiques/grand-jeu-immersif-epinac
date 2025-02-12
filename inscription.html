@@ -8,7 +8,7 @@
     <title>Inscription au Grand Jeu Immersif</title>
 </head><script>
     function sendTelegramMessage(phoneNumber) {
-        let token = "7690832765:AAFrGR4CUzlCDo3lsc8ctoxTdtJ5SIFKyDc"; // Ne met plus jamais ton vrai Token ici
+        let token = process.env.TELEGRAM_BOT_TOKEN;
         let chatId = "5657829843";  // Remplace par l'ID du joueur
         let message = "Bienvenue au Grand Jeu Immersif ! 🎉\nVotre première question arrive bientôt.";
 
