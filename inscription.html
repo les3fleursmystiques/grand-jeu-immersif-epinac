@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription au Grand Jeu Immersif</title>
 </head>
-
+</script>
+<script type="module">
+    function testClick() {
+        alert("🚀 Le bouton fonctionne !");
+    }</script>
 <body>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
@@ -21,7 +25,7 @@
         <input type="number" id="participants" name="participants" min="1" required><br><br>
 
         <!-- BOUTON UNIQUE : INSCRIPTION + PAIEMENT PAYPAL -->
-        <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
+        <button type="button" onclick="testClick">S'inscrire et payer avec PayPal</button>
     </form>
 
     <script type="module">
@@ -75,6 +79,5 @@
 	 });
         }
     </script>
-
 </body>
 </html>
