@@ -1,3 +1,7 @@
+console.log("🚀 Chargement du script...");
+console.log("🔍 TELEGRAM_BOT_TOKEN :", import.meta.env.VITE_TELEGRAM_BOT_TOKEN || "Non défini");
+console.log("🔍 TELEGRAM_CHAT_ID :", import.meta.env.VITE_TELEGRAM_CHAT_ID || "Non défini");
+
 console.log("✅ script_clean.js est bien chargé et exécuté !");
 
 window.testTelegram = function() {
