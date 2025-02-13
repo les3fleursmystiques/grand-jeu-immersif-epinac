@@ -24,11 +24,12 @@
         <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
     </form>
 
-    <script>
-        function sendTelegramMessage() {
-            let token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-	    let chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+    <script type="module">
+        
+            const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+	    const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
+	function sendTelegramMessage() {
             let teamName = document.getElementById("team-name").value;
             let phoneNumber = document.getElementById("phone-number").value;
             let participants = document.getElementById("participants").value;
@@ -39,26 +40,39 @@
                 + "🎟️ **Participants** : " + participants + "\n\n"
                 + "✅ Merci pour votre inscription ! Vous recevrez bientôt votre première question.";
 
-            let url = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(message) + "&parse_mode=Markdown";
+            let url = 'https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown';
 
             return fetch(url)
                 .then(response => {
+		    if (response.ok) {
                     console.log("Message Telegram envoyé");
-                })
-                .catch(error => console.error("Erreur Telegram :", error));
+                return true;
+	    } else {
+                    console.error("Erreur lors de l'envoi du message Telegram");
+		return false;
         }
+})
+		.catch(error => {
+		    console.error("Erreur Telegram :", error);
+		return false;
+	});
+}
 
         function redirectToPayPal(event) {
-            event.preventDefault();  // Empêche l’envoi du formulaire immédiatement
+            event.preventDefault();
 
-            sendTelegramMessage().then(() => {
+            sendTelegramMessage().then(success => {
+	    if (success) {
                 let participants = document.getElementById("participants").value;
                 let totalPrice = 5 * participants; // Calcule le montant total
-                let paypalLink = "https://www.paypal.me/LaurieBlanot/" + totalPrice;
+                let paypalLink = 'https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR/${totalPrice}';
 
-                alert("✅ Inscription validée ! Montant à payer : " + totalPrice + " €");
+                alert('✅ Inscription validée ! Montant à payer : ${totalPrice} €');
                 window.open(paypalLink, "_blank");  // Ouvrir PayPal
-            });
+	    } else {
+		alert("X Erreur : L'inscription n'a pas été envoyée à Telegram.");
+           }
+	 });
         }
     </script>
 
