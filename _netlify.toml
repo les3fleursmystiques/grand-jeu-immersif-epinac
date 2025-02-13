@@ -1,4 +1,4 @@
 [[headers]]
-for = "/script_clean.js"
+for = "/script.js"
 [headers.values]
 Content-Type = "application/javascript"
