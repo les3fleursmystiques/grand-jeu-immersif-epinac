@@ -1,7 +1,7 @@
 console.log("🚀 Chargement du script...");
 
-// Récupérer les variables d'environnement en les injectant dynamiquement
-fetch("/.env")
+// Récupérer les variables d'environnement depuis recupvar.env
+fetch("/recupvar.env")
   .then(response => response.text())
   .then(text => {
       let env = text.split("\n");
