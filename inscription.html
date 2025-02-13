@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription au Grand Jeu Immersif</title>
 </head>
-</script>
-<script type="module">
-    function testClick() {
-        alert("🚀 Le bouton fonctionne !");
-    }</script>
+
 <body>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
@@ -18,66 +14,89 @@
         <input type="text" id="team-name" name="team_name" required><br><br>
 
         <label for="phone-number">Numéro de téléphone :</label>
-        <input type="tel" id="phone-number" name="phone_number" pattern="^(\+33|0)[1-9]\d{8}$" required placeholder="Ex : 0612345678"><br><br>
-        <p style="color: red;"><strong>⚠ Le numéro de téléphone est obligatoire pour recevoir les questions du jeu.</strong></p>
+        <input type="tel" id="phone-number" name="phone_number" required placeholder="Ex : 0612345678"><br><br>
+        <p style="color: red;"><strong>⚠ Le numéro de téléphone est obligatoire et doit être un numéro français valide.</strong></p>
 
         <label for="participants">Nombre de participants :</label>
         <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-        <!-- BOUTON UNIQUE : INSCRIPTION + PAIEMENT PAYPAL -->
-        <button type="button" onclick="testClick">S'inscrire et payer avec PayPal</button>
+        <!-- BOUTONS : Test & Paiement -->
+        <button type="button" onclick="testTelegram()">TEST - Envoi Telegram sans payer</button>
+        <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
     </form>
 
     <script type="module">
-        
-            const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-	    const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+        // Récupérer les variables Netlify
+        const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+        const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
-	function sendTelegramMessage() {
+        function validatePhoneNumber(phone) {
+            const regex = /^(\+33|0)[1-9]\d{8}$/; // Vérifie si le numéro est un numéro français valide
+            return regex.test(phone);
+        }
+
+        function sendTelegramMessage() {
             let teamName = document.getElementById("team-name").value;
             let phoneNumber = document.getElementById("phone-number").value;
             let participants = document.getElementById("participants").value;
 
-            let message = "📌 **Nouvelle Inscription !**\n\n"
-                + "👥 **Équipe** : " + teamName + "\n"
-                + "📞 **Téléphone** : " + phoneNumber + "\n"
-                + "🎟️ **Participants** : " + participants + "\n\n"
-                + "✅ Merci pour votre inscription ! Vous recevrez bientôt votre première question.";
+            if (!validatePhoneNumber(phoneNumber)) {
+                alert("❌ Erreur : Veuillez entrer un numéro de téléphone français valide.");
+                return Promise.resolve(false);
+            }
 
-            let url = 'https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown';
+            let message = `📌 **Nouvelle Inscription !**\n\n
+            👥 **Équipe** : ${teamName}\n
+            📞 **Téléphone** : ${phoneNumber}\n
+            🎟️ **Participants** : ${participants}\n\n
+            ✅ Merci pour votre inscription ! Vous recevrez bientôt votre première question.`;
+
+            let url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
 
             return fetch(url)
                 .then(response => {
-		    if (response.ok) {
-                    console.log("Message Telegram envoyé");
-                return true;
-	    } else {
-                    console.error("Erreur lors de l'envoi du message Telegram");
-		return false;
+                    if (response.ok) {
+                        console.log("✅ Message Telegram envoyé !");
+                        alert("✅ Inscription validée sur Telegram !");
+                        return true;
+                    } else {
+                        console.error("❌ Erreur lors de l'envoi du message Telegram");
+                        alert("❌ Erreur : Impossible d'envoyer l'inscription à Telegram.");
+                        return false;
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ Erreur Telegram :", error);
+                    alert("❌ Erreur : Problème avec l'envoi du message.");
+                    return false;
+                });
         }
-})
-		.catch(error => {
-		    console.error("Erreur Telegram :", error);
-		return false;
-	});
-}
+
+        function testTelegram() {
+            sendTelegramMessage().then(success => {
+                if (success) {
+                    alert("✅ Test réussi : Message envoyé sur Telegram !");
+                } else {
+                    alert("❌ Test échoué : Vérifiez vos paramètres.");
+                }
+            });
+        }
 
         function redirectToPayPal(event) {
             event.preventDefault();
 
             sendTelegramMessage().then(success => {
-	    if (success) {
-                let participants = document.getElementById("participants").value;
-                let totalPrice = 5 * participants; // Calcule le montant total
-                let paypalLink = 'https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR/${totalPrice}';
+                if (success) {
+                    let participants = document.getElementById("participants").value;
+                    let totalPrice = 5 * participants;
+                    let paypalLink = `https://www.paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR&amount=${totalPrice}EUR`;
 
-                alert('✅ Inscription validée ! Montant à payer : ${totalPrice} €');
-                window.open(paypalLink, "_blank");  // Ouvrir PayPal
-	    } else {
-		alert("X Erreur : L'inscription n'a pas été envoyée à Telegram.");
-           }
-	 });
+                    alert(`✅ Inscription validée ! Montant à payer : ${totalPrice} €`);
+                    window.open(paypalLink, "_blank"); 
+                }
+            });
         }
     </script>
+
 </body>
 </html>
