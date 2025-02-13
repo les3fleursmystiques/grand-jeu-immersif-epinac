@@ -1,0 +1,1 @@
+Ce fichier contient le site du Grand Jeu Immersif à Épinac. Placez tous ces fichiers dans un hébergeur comme Netlify.
