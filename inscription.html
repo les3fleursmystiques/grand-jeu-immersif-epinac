@@ -25,89 +25,20 @@
         <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
     </form>
 
-<script type="module">
-    // Vérifier si Netlify fournit bien les variables d’environnement
-    console.log("🔍 import.meta.env :", import.meta.env);
+    <!-- Stocker les variables Netlify pour qu'elles soient accessibles par script.js -->
+    <script type="module">
+        console.log("🔍 import.meta.env :", import.meta.env);
 
-    // Stocker les variables dans `window.env` pour qu'elles soient accessibles par `script.js`
-    window.env = {
-        VITE_TELEGRAM_BOT_TOKEN: import.meta.env ? import.meta.env.VITE_TELEGRAM_BOT_TOKEN : "",
-        VITE_TELEGRAM_CHAT_ID: import.meta.env ? import.meta.env.VITE_TELEGRAM_CHAT_ID : ""
-    };
+        window.env = {
+            VITE_TELEGRAM_BOT_TOKEN: import.meta.env ? import.meta.env.VITE_TELEGRAM_BOT_TOKEN : "",
+            VITE_TELEGRAM_CHAT_ID: import.meta.env ? import.meta.env.VITE_TELEGRAM_CHAT_ID : ""
+        };
 
-    // Vérifier que les variables sont bien enregistrées
-    console.log("🟢 Variables Netlify stockées dans window.env :", window.env);
-</script>
-   };
-   
-        function validatePhoneNumber(phone) {
-            const regex = /^(\+33|0)[1-9]\d{8}$/; // Vérifie si le numéro est un numéro français valide
-            return regex.test(phone);
-        }
+        console.log("🟢 Variables Netlify stockées dans window.env :", window.env);
+    </script>
 
-        function sendTelegramMessage() {
-            let teamName = document.getElementById("team-name").value;
-            let phoneNumber = document.getElementById("phone-number").value;
-            let participants = document.getElementById("participants").value;
+    <!-- Charger le fichier JavaScript principal -->
+    <script src="/script.js" defer></script>
 
-            if (!validatePhoneNumber(phoneNumber)) {
-                alert("❌ Erreur : Veuillez entrer un numéro de téléphone français valide.");
-                return Promise.resolve(false);
-            }
-
-            let message = `📌 **Nouvelle Inscription !**\n\n
-            👥 **Équipe** : ${teamName}\n
-            📞 **Téléphone** : ${phoneNumber}\n
-            🎟️ **Participants** : ${participants}\n\n
-            ✅ Merci pour votre inscription ! Vous recevrez bientôt votre première question.`;
-
-            let url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
-
-            return fetch(url)
-                .then(response => {
-                    if (response.ok) {
-                        console.log("✅ Message Telegram envoyé !");
-                        alert("✅ Inscription validée sur Telegram !");
-                        return true;
-                    } else {
-                        console.error("❌ Erreur lors de l'envoi du message Telegram");
-                        alert("❌ Erreur : Impossible d'envoyer l'inscription à Telegram.");
-                        return false;
-                    }
-                })
-                .catch(error => {
-                    console.error("❌ Erreur Telegram :", error);
-                    alert("❌ Erreur : Problème avec l'envoi du message.");
-                    return false;
-                });
-        }
-
-        function testTelegram() {
-            sendTelegramMessage().then(success => {
-                if (success) {
-                    alert("✅ Test réussi : Message envoyé sur Telegram !");
-                } else {
-                    alert("❌ Test échoué : Vérifiez vos paramètres.");
-                }
-            });
-        }
-
-        function redirectToPayPal(event) {
-            event.preventDefault();
-
-            sendTelegramMessage().then(success => {
-                if (success) {
-                    let participants = document.getElementById("participants").value;
-                    let totalPrice = 5 * participants;
-                    let paypalLink = `https://www.paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR&amount=${totalPrice}EUR`;
-
-                    alert(`✅ Inscription validée ! Montant à payer : ${totalPrice} €`);
-                    window.open(paypalLink, "_blank"); 
-                }
-            });
-        }
-</script>
-<script src="/script.js" defer></script>
-    
 </body>
 </html>
