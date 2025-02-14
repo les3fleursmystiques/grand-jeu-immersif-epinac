@@ -24,3 +24,9 @@ window.redirectToPayPal = function(event) {
     alert("🚀 Redirection vers PayPal !");
     console.log("✅ redirectToPayPal() a été appelée !");
 };
+
+// Vérifier après l'enregistrement des fonctions
+console.log("🔄 Vérification après enregistrement...");
+console.log("🔍 typeof testTelegram :", typeof window.testTelegram);
+console.log("🔍 typeof redirectToPayPal :", typeof window.redirectToPayPal);
+console.log("✅ Fonctions enregistrées !");
