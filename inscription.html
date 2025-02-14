@@ -25,11 +25,21 @@
         <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
     </form>
 
-    <script type="module">
-        // Récupérer les variables Netlify
-        const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-        const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+<script type="module">
+    // Vérifier si Netlify fournit bien les variables d’environnement
+    console.log("🔍 import.meta.env :", import.meta.env);
 
+    // Stocker les variables dans `window.env` pour qu'elles soient accessibles par `script.js`
+    window.env = {
+        VITE_TELEGRAM_BOT_TOKEN: import.meta.env ? import.meta.env.VITE_TELEGRAM_BOT_TOKEN : "",
+        VITE_TELEGRAM_CHAT_ID: import.meta.env ? import.meta.env.VITE_TELEGRAM_CHAT_ID : ""
+    };
+
+    // Vérifier que les variables sont bien enregistrées
+    console.log("🟢 Variables Netlify stockées dans window.env :", window.env);
+</script>
+   };
+   
         function validatePhoneNumber(phone) {
             const regex = /^(\+33|0)[1-9]\d{8}$/; // Vérifie si le numéro est un numéro français valide
             return regex.test(phone);
