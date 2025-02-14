@@ -16,3 +16,6 @@ from = "/env.js"
 to = "/.netlify/functions/env"
 status = 200
 force = true
+
+[functions]
+ directory = "netlify/functions"
