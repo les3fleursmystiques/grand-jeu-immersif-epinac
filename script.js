@@ -1,42 +1,26 @@
-console.log("🚀 Chargement du script...");
+// Récupérer les variables Telegram depuis window.env
+const token = window.env ? window.env.VITE_TELEGRAM_BOT_TOKEN : "";
+const chatId = window.env ? window.env.VITE_TELEGRAM_CHAT_ID : "";
 
-// Récupération des variables d'environnement de Netlify
-window.TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || "Non défini";
-window.TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || "Non défini";
+// Vérifier si les variables sont bien récupérées
+console.log("🟢 Token Telegram :", token ? "OK" : "NON DÉFINI");
+console.log("🟢 Chat ID Telegram :", chatId ? "OK" : "NON DÉFINI");
 
-console.log("🔍 TELEGRAM_BOT_TOKEN :", window.TELEGRAM_BOT_TOKEN);
-console.log("🔍 TELEGRAM_CHAT_ID :", window.TELEGRAM_CHAT_ID);
+// Vérifier que les fonctions sont bien enregistrées
+console.log("🔍 typeof testTelegram :", typeof window.testTelegram);
+console.log("🔍 typeof redirectToPayPal :", typeof window.redirectToPayPal);
 
 console.log("✅ script.js est bien chargé et exécuté !");
 
+// Fonction testTelegram
 window.testTelegram = function() {
     alert("🚀 testTelegram() fonctionne !");
     console.log("✅ testTelegram() a été appelée !");
 };
 
+// Fonction redirectToPayPal
 window.redirectToPayPal = function(event) {
     event.preventDefault();
     alert("🚀 Redirection vers PayPal !");
     console.log("✅ redirectToPayPal() a été appelée !");
 };
-
-// Vérifier que les fonctions sont bien enregistrées
-console.log("🔍 typeof testTelegram :", typeof window.testTelegram);
-console.log("🔍 typeof redirectToPayPal :", typeof window.redirectToPayPal);
-
-console.log("✅ script_clean.js est bien chargé et exécuté !");
-
-window.testTelegram = function() {
-    alert("🚀 testTelegram() fonctionne !");
-    console.log("✅ testTelegram() a été appelée !");
-};
-
-window.redirectToPayPal = function(event) {
-    event.preventDefault();
-    alert("🚀 Redirection vers PayPal !");
-    console.log("✅ redirectToPayPal() a été appelée !");
-};
-
-// Vérifier que les fonctions sont bien enregistrées
-console.log("🔍 typeof testTelegram :", typeof window.testTelegram);
-console.log("🔍 typeof redirectToPayPal :", typeof window.redirectToPayPal);
