@@ -25,16 +25,16 @@
         <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
     </form>
 
-    <!-- Stocker les variables Netlify pour qu'elles soient accessibles par script.js -->
+    <!-- Charger les variables Netlify pour qu'elles soient accessibles par script.js -->
     <script type="module">
-        console.log("🔍 import.meta.env :", import.meta.env);
+        import env from "./env.js";
 
         window.env = {
-            VITE_TELEGRAM_BOT_TOKEN: import.meta.env ? import.meta.env.VITE_TELEGRAM_BOT_TOKEN : "",
-            VITE_TELEGRAM_CHAT_ID: import.meta.env ? import.meta.env.VITE_TELEGRAM_CHAT_ID : ""
+            VITE_TELEGRAM_BOT_TOKEN: env.VITE_TELEGRAM_BOT_TOKEN,
+            VITE_TELEGRAM_CHAT_ID: env.VITE_TELEGRAM_CHAT_ID
         };
 
-        console.log("🟢 Variables Netlify stockées dans window.env :", window.env);
+        console.log("🟢 Variables Netlify récupérées via env.js :", window.env);
     </script>
 
     <!-- Charger le fichier JavaScript principal -->
