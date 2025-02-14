@@ -2,3 +2,17 @@
 for = "/script.js"
 [headers.values]
 Content-Type = "application/javascript"
+
+[build]
+publish = "."
+
+[[headers]]
+for = "/*"
+[headers.values]
+Access-Control-Allow-Origin = "*"
+
+[[redirects]]
+from = "/env.js"
+to = "/.netlify/functions/env"
+status = 200
+force = true
