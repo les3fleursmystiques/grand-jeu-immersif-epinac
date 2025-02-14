@@ -1,6 +1,11 @@
-window.env = {
-    VITE_TELEGRAM_BOT_TOKEN: "TON_TOKEN_ICI",
-    VITE_TELEGRAM_CHAT_ID: "TON_CHAT_ID_ICI"
+// Mise à jour forcée pour Netlify - Vérification de la fonction serverless
+exports.handler = async function () {
+    return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" }, // Ajout du header JSON
+        body: JSON.stringify({
+            VITE_TELEGRAM_BOT_TOKEN: process.env.VITE_TELEGRAM_BOT_TOKEN || "",
+            VITE_TELEGRAM_CHAT_ID: process.env.VITE_TELEGRAM_CHAT_ID || ""
+        })
+    };
 };
-
-console.log("🟢 Variables Netlify stockées dans window.env :", window.env);
