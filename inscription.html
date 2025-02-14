@@ -25,8 +25,21 @@
         <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
     </form>
 
-    <!-- Charger les variables Netlify via env.js -->
-    <script src="/env.js"></script>
+    <!-- Récupérer les variables Netlify via la fonction serverless -->
+    <script>
+        fetch("/.netlify/functions/env")
+            .then(response => response.json())
+            .then(data => {
+                window.env = {
+                    VITE_TELEGRAM_BOT_TOKEN: data.VITE_TELEGRAM_BOT_TOKEN || "",
+                    VITE_TELEGRAM_CHAT_ID: data.VITE_TELEGRAM_CHAT_ID || ""
+                };
+                console.log("🟢 Variables Netlify récupérées via la fonction serverless :", window.env);
+            })
+            .catch(error => {
+                console.error("❌ Erreur lors de la récupération des variables Netlify :", error);
+            });
+    </script>
 
     <!-- Charger le fichier JavaScript principal -->
     <script src="/script.js" defer></script>
