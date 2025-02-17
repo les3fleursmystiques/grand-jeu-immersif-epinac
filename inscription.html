@@ -15,7 +15,7 @@
 
         <label for="phone-number">Numéro de téléphone :</label>
         <input type="tel" id="phone-number" name="phone_number" required placeholder="Ex : 0612345678"><br><br>
-        <p style="color: red;"><strong>⚠ Le numéro de téléphone est obligatoire et doit être un numéro français valide.</strong></p>
+        <p style="color: red;"><strong>⚠ Le numéro de téléphone est obligatoire et doit être un numéro valide.</strong></p>
 
         <label for="participants">Nombre de participants :</label>
         <input type="number" id="participants" name="participants" min="1" required><br><br>
@@ -27,14 +27,16 @@
 
     <!-- Récupérer les variables Netlify via la fonction serverless -->
     <script>
+        console.log("🔄 Chargement des variables d’environnement...");
         fetch("/.netlify/functions/env")
             .then(response => response.json())
             .then(data => {
                 window.env = {
                     VITE_TELEGRAM_BOT_TOKEN: data.VITE_TELEGRAM_BOT_TOKEN || "",
-                    VITE_TELEGRAM_CHAT_ID: data.VITE_TELEGRAM_CHAT_ID || ""
+                    VITE_TELEGRAM_CHAT_ID: data.VITE_TELEGRAM_CHAT_ID || "",
+                    ABSTRACT_API_KEY: data.ABSTRACT_API_KEY || ""  // 🔹 Ajout de la clé AbstractAPI
                 };
-                console.log("🟢 Variables Netlify récupérées via la fonction serverless :", window.env);
+                console.log("🟢 Variables Netlify récupérées :", window.env);
             })
             .catch(error => {
                 console.error("❌ Erreur lors de la récupération des variables Netlify :", error);
