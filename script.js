@@ -40,13 +40,16 @@ fetch("/.netlify/functions/env")
                 console.log("📞 Résultat API NumVerify :", data);
 
                 if (data.valid) {
+                    console.log("✅ Numéro reconnu comme valide par NumVerify !");
                     return { valid: true, message: "✅ Numéro valide et existant." };
                 } else {
-                    return { valid: false, message: "❌ Numéro invalide ou inexistant." };
+                    console.log("❌ Numéro refusé par NumVerify. Vérification détaillée...");
+                    console.log("📌 API Response:", data);
+                    return { valid: false, message: `❌ Numéro invalide ou non reconnu par l'API (${data.line_type || "Inconnu"}).` };
                 }
             } catch (error) {
                 console.error("❌ Erreur API NumVerify :", error);
-                return { valid: false, message: "⚠ Erreur de vérification du numéro." };
+                return { valid: false, message: "⚠ Erreur de connexion à l’API NumVerify." };
             }
         }
 
