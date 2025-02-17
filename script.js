@@ -2,6 +2,9 @@
 const token = window.env ? window.env.VITE_TELEGRAM_BOT_TOKEN : "";
 const chatId = window.env ? window.env.VITE_TELEGRAM_CHAT_ID : "";
 
+console.log("Token Telegram :", token);
+console.log("Chat ID Telegram :", chatId);
+
 // Vérifier si les variables sont bien récupérées
 console.log("🟢 Token Telegram :", token ? "OK" : "NON DÉFINI");
 console.log("🟢 Chat ID Telegram :", chatId ? "OK" : "NON DÉFINI");
