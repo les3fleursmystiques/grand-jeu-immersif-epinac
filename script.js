@@ -2,6 +2,9 @@
 fetch("/.netlify/functions/env")
     .then(response => response.json())
     .then(env => {
+        // Stocker les valeurs dans `window.env` pour être sûr qu'elles sont accessibles
+        window.env = env;
+
         let token = env.VITE_TELEGRAM_BOT_TOKEN || "NON DÉFINI";
         let chatId = env.VITE_TELEGRAM_CHAT_ID || "NON DÉFINI";
 
@@ -11,7 +14,7 @@ fetch("/.netlify/functions/env")
         // Vérifier si les variables sont bien récupérées
         console.log("🟢 Vérification des variables :", token ? "OK" : "NON DÉFINI", "|", chatId ? "OK" : "NON DÉFINI");
 
-        // Initialiser les fonctions après la récupération des variables
+        // Fonction testTelegram (envoi Telegram)
         window.testTelegram = function () {
             let teamName = document.getElementById("team-name").value;
             let phoneNumber = document.getElementById("phone-number").value;
@@ -24,7 +27,7 @@ fetch("/.netlify/functions/env")
 
             let message = `📌 **Nouvelle Inscription !**\n\n👥 **Équipe** : ${teamName}\n📞 **Téléphone** : ${phoneNumber}\n🎟️ **Participants** : ${participants}`;
 
-            let url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+            let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${window.env.VITE_TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
 
             console.log("🚀 Tentative d'envoi Telegram :", url);
 
@@ -68,4 +71,3 @@ fetch("/.netlify/functions/env")
     .catch(error => {
         console.error("❌ Erreur lors de la récupération des variables d’environnement :", error);
     });
-
