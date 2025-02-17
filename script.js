@@ -13,9 +13,16 @@ fetch("/.netlify/functions/env")
         console.log("🟢 Token Telegram :", token);
         console.log("🟢 Chat ID Telegram :", chatId);
 
+        // Ajouter automatiquement +33 si l'utilisateur oublie le préfixe
+        document.getElementById("phone-number").addEventListener("input", function () {
+            let phoneField = this;
+            if (phoneField.value.length > 0 && !phoneField.value.startsWith("+")) {
+                phoneField.value = "+33" + phoneField.value;
+            }
+        });
+
         // Fonction de validation du numéro de téléphone
         function validatePhoneNumber(phoneNumber) {
-            // Vérifier si le format est correct (commence par +, suivi de chiffres)
             let regex = /^\+?[1-9]\d{7,14}$/;
             if (!regex.test(phoneNumber)) {
                 return { valid: false, message: "❌ Format de numéro invalide. Utilisez + suivi du code pays." };
@@ -25,7 +32,7 @@ fetch("/.netlify/functions/env")
 
         // Vérification du numéro via API NumVerify
         async function checkPhoneNumberExists(phoneNumber) {
-            let url = `http://apilayer.net/api/validate?access_key=${NUMVERIFY_API_KEY}&number=${phoneNumber}&format=1`;
+            let url = `https://apilayer.net/api/validate?access_key=${NUMVERIFY_API_KEY}&number=${phoneNumber}&format=1`;
 
             try {
                 let response = await fetch(url);
