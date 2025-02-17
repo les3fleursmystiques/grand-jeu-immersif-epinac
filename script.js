@@ -1,8 +1,10 @@
-// Récupérer les variables d’environnement depuis la fonction serverless Netlify
+// Clé API pour vérifier l'existence du numéro (Inscription gratuite sur numverify.com)
+const NUMVERIFY_API_KEY = "VOTRE_CLÉ_API_ICI";
+
+// Récupérer les variables d’environnement depuis Netlify
 fetch("/.netlify/functions/env")
     .then(response => response.json())
     .then(env => {
-        // Stocker les valeurs dans `window.env` pour être sûr qu'elles sont accessibles
         window.env = env;
 
         let token = env.VITE_TELEGRAM_BOT_TOKEN || "NON DÉFINI";
@@ -11,17 +13,58 @@ fetch("/.netlify/functions/env")
         console.log("🟢 Token Telegram :", token);
         console.log("🟢 Chat ID Telegram :", chatId);
 
-        // Vérifier si les variables sont bien récupérées
-        console.log("🟢 Vérification des variables :", token ? "OK" : "NON DÉFINI", "|", chatId ? "OK" : "NON DÉFINI");
+        // Fonction de validation du numéro de téléphone
+        function validatePhoneNumber(phoneNumber) {
+            // Vérifier si le format est correct (commence par +, suivi de chiffres)
+            let regex = /^\+?[1-9]\d{7,14}$/;
+            if (!regex.test(phoneNumber)) {
+                return { valid: false, message: "❌ Format de numéro invalide. Utilisez + suivi du code pays." };
+            }
+            return { valid: true, message: "✅ Format valide" };
+        }
 
-        // Fonction testTelegram (envoi Telegram)
-        window.testTelegram = function () {
+        // Vérification du numéro via API NumVerify
+        async function checkPhoneNumberExists(phoneNumber) {
+            let url = `http://apilayer.net/api/validate?access_key=${NUMVERIFY_API_KEY}&number=${phoneNumber}&format=1`;
+
+            try {
+                let response = await fetch(url);
+                let data = await response.json();
+                console.log("📞 Résultat API NumVerify :", data);
+
+                if (data.valid) {
+                    return { valid: true, message: "✅ Numéro valide et existant." };
+                } else {
+                    return { valid: false, message: "❌ Numéro invalide ou inexistant." };
+                }
+            } catch (error) {
+                console.error("❌ Erreur API NumVerify :", error);
+                return { valid: false, message: "⚠ Erreur de vérification du numéro." };
+            }
+        }
+
+        // Fonction testTelegram (envoi Telegram avec validation)
+        window.testTelegram = async function () {
             let teamName = document.getElementById("team-name").value;
             let phoneNumber = document.getElementById("phone-number").value;
             let participants = document.getElementById("participants").value;
 
             if (!teamName || !phoneNumber || !participants) {
                 alert("❌ Erreur : Remplissez tous les champs avant d'envoyer !");
+                return;
+            }
+
+            // Vérification format
+            let validation = validatePhoneNumber(phoneNumber);
+            if (!validation.valid) {
+                alert(validation.message);
+                return;
+            }
+
+            // Vérification existence (API)
+            let check = await checkPhoneNumberExists(phoneNumber);
+            if (!check.valid) {
+                alert(check.message);
                 return;
             }
 
@@ -45,25 +88,6 @@ fetch("/.netlify/functions/env")
                     console.error("❌ Erreur réseau :", error);
                     alert("❌ Erreur : Problème avec la connexion à Telegram.");
                 });
-        };
-
-        // Fonction redirectToPayPal (paiement)
-        window.redirectToPayPal = function (event) {
-            event.preventDefault();
-
-            let participants = document.getElementById("participants").value;
-            if (!participants || participants <= 0) {
-                alert("❌ Erreur : Veuillez entrer un nombre de participants valide !");
-                return;
-            }
-
-            let totalPrice = 5 * participants;
-            let paypalLink = `https://www.paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR&amount=${totalPrice}EUR`;
-
-            console.log("🚀 Redirection vers PayPal :", paypalLink);
-            alert(`✅ Inscription validée ! Montant à payer : ${totalPrice} €`);
-
-            window.open(paypalLink, "_blank"); // Ouvre PayPal dans un nouvel onglet
         };
 
         console.log("✅ script.js est bien chargé et exécuté !");
