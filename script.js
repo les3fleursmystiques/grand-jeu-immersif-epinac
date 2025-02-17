@@ -1,6 +1,3 @@
-// Clé API pour vérifier l'existence du numéro (Inscription gratuite sur numverify.com)
-const NUMVERIFY_API_KEY = "VOTRE_CLÉ_API_ICI";
-
 // Récupérer les variables d’environnement depuis Netlify
 fetch("/.netlify/functions/env")
     .then(response => response.json())
@@ -9,9 +6,11 @@ fetch("/.netlify/functions/env")
 
         let token = env.VITE_TELEGRAM_BOT_TOKEN || "NON DÉFINI";
         let chatId = env.VITE_TELEGRAM_CHAT_ID || "NON DÉFINI";
+        let ABSTRACT_API_KEY = env.ABSTRACT_API_KEY || "NON DÉFINI";
 
         console.log("🟢 Token Telegram :", token);
         console.log("🟢 Chat ID Telegram :", chatId);
+        console.log("🟢 Clé API AbstractAPI :", ABSTRACT_API_KEY);
 
         // Ajouter automatiquement +33 si l'utilisateur oublie le préfixe
         document.getElementById("phone-number").addEventListener("input", function () {
@@ -21,7 +20,7 @@ fetch("/.netlify/functions/env")
             }
         });
 
-        // Fonction de validation du numéro de téléphone
+        // Fonction de validation du format du numéro de téléphone
         function validatePhoneNumber(phoneNumber) {
             let regex = /^\+?[1-9]\d{7,14}$/;
             if (!regex.test(phoneNumber)) {
@@ -30,26 +29,25 @@ fetch("/.netlify/functions/env")
             return { valid: true, message: "✅ Format valide" };
         }
 
-        // Vérification du numéro via API NumVerify
+        // Vérification du numéro via AbstractAPI
         async function checkPhoneNumberExists(phoneNumber) {
-            let url = `https://apilayer.net/api/validate?access_key=${NUMVERIFY_API_KEY}&number=${phoneNumber}&format=1`;
+            let url = `https://phonevalidation.abstractapi.com/v1/?api_key=${ABSTRACT_API_KEY}&phone=${phoneNumber}`;
 
             try {
                 let response = await fetch(url);
                 let data = await response.json();
-                console.log("📞 Résultat API NumVerify :", data);
+                console.log("📞 Résultat API AbstractAPI :", data);
 
                 if (data.valid) {
-                    console.log("✅ Numéro reconnu comme valide par NumVerify !");
+                    console.log("✅ Numéro reconnu comme valide par AbstractAPI !");
                     return { valid: true, message: "✅ Numéro valide et existant." };
                 } else {
-                    console.log("❌ Numéro refusé par NumVerify. Vérification détaillée...");
-                    console.log("📌 API Response:", data);
-                    return { valid: false, message: `❌ Numéro invalide ou non reconnu par l'API (${data.line_type || "Inconnu"}).` };
+                    console.log("❌ Numéro refusé par AbstractAPI.");
+                    return { valid: false, message: "❌ Numéro invalide ou inexistant." };
                 }
             } catch (error) {
-                console.error("❌ Erreur API NumVerify :", error);
-                return { valid: false, message: "⚠ Erreur de connexion à l’API NumVerify." };
+                console.error("❌ Erreur API AbstractAPI :", error);
+                return { valid: false, message: "⚠ Erreur de connexion à AbstractAPI." };
             }
         }
 
