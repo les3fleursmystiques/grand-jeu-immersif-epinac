@@ -1,11 +1,12 @@
-// Mise à jour forcée pour Netlify - Vérification de la fonction serverless
+// Fonction serverless pour exposer les variables d’environnement sur Netlify
 exports.handler = async function () {
     return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" }, // Ajout du header JSON
         body: JSON.stringify({
             VITE_TELEGRAM_BOT_TOKEN: process.env.VITE_TELEGRAM_BOT_TOKEN || "",
-            VITE_TELEGRAM_CHAT_ID: process.env.VITE_TELEGRAM_CHAT_ID || ""
+            VITE_TELEGRAM_CHAT_ID: process.env.VITE_TELEGRAM_CHAT_ID || "",
+            ABSTRACT_API_KEY: process.env.ABSTRACT_API_KEY || ""  // 🔹 Ajout de ABSTRACT_API_KEY
         })
     };
 };
