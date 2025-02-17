@@ -1,9 +1,15 @@
-// Récupérer les variables Telegram depuis window.env
-const token = window.env ? window.env.VITE_TELEGRAM_BOT_TOKEN : "";
-const chatId = window.env ? window.env.VITE_TELEGRAM_CHAT_ID : "";
+// Déclaration des variables en haut pour qu'elles soient accessibles globalement
+let token = "NON DÉFINI";
+let chatId = "NON DÉFINI";
 
-console.log("Token Telegram :", token);
-console.log("Chat ID Telegram :", chatId);
+// Attendre que le DOM soit chargé avant de récupérer les variables
+document.addEventListener("DOMContentLoaded", function () {
+    token = window.env ? window.env.VITE_TELEGRAM_BOT_TOKEN : "NON DÉFINI";
+    chatId = window.env ? window.env.VITE_TELEGRAM_CHAT_ID : "NON DÉFINI";
+
+    console.log("🟢 Token Telegram :", token);
+    console.log("🟢 Chat ID Telegram :", chatId);
+});
 
 // Vérifier si les variables sont bien récupérées
 console.log("🟢 Token Telegram :", token ? "OK" : "NON DÉFINI");
@@ -39,36 +45,4 @@ window.testTelegram = function() {
                 alert("✅ Inscription validée et envoyée sur Telegram !");
             } else {
                 console.error("❌ Erreur Telegram :", data);
-                alert("❌ Erreur : Impossible d'envoyer l'inscription sur Telegram.");
-            }
-        })
-        .catch(error => {
-            console.error("❌ Erreur réseau :", error);
-            alert("❌ Erreur : Problème avec la connexion à Telegram.");
-        });
-};
-
-// Fonction redirectToPayPal (paiement)
-window.redirectToPayPal = function(event) {
-    event.preventDefault();
-
-    let participants = document.getElementById("participants").value;
-    if (!participants || participants <= 0) {
-        alert("❌ Erreur : Veuillez entrer un nombre de participants valide !");
-        return;
-    }
-
-    let totalPrice = 5 * participants;
-    let paypalLink = `https://www.paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR&amount=${totalPrice}EUR`;
-
-    console.log("🚀 Redirection vers PayPal :", paypalLink);
-    alert(`✅ Inscription validée ! Montant à payer : ${totalPrice} €`);
-
-    window.open(paypalLink, "_blank"); // Ouvre PayPal dans un nouvel onglet
-};
-
-// Vérifier après l'enregistrement des fonctions
-console.log("🔄 Vérification après enregistrement...");
-console.log("🔍 typeof testTelegram :", typeof window.testTelegram);
-console.log("🔍 typeof redirectToPayPal :", typeof window.redirectToPayPal);
-console.log("✅ Fonctions enregistrées !");
+                alert("❌ Erreur : Impossible d'envoyer l'inscription sur
