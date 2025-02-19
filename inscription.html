@@ -14,6 +14,7 @@
         <strong>⚠ IMPORTANT :</strong>
         <p>Pour participer, vous devez obligatoirement avoir accès à <strong>Telegram</strong>, car toutes les informations et la validation se feront via cette application.</p>
         <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram ici</a> si ce n'est pas encore fait.</p>
+        <p>💬 <strong>Avant de vous inscrire, cliquez sur ce lien et envoyez "/start" à notre bot :</strong> <a href="https://t.me/EpinacetsonGrandJeu_bot" target="_blank">@EpinacetsonGrandJeu_bot</a></p>
     </div>
 
     <form id="registration-form">
@@ -32,8 +33,10 @@
         <label for="participants">Nombre de participants :</label>
         <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-        <!-- Section de validation du code Telegram -->
-        <div id="verification-section" style="display: none;">
+        <!-- 🔹 Section de validation du code Telegram (modifiée pour plus de clarté) -->
+        <div id="verification-section" style="display: none; background-color: #e3f2fd; padding: 10px; border-radius: 5px;">
+            <h3>📩 Vérification de votre inscription</h3>
+            <p>Un code de validation vous a été envoyé sur votre compte Telegram. Entrez-le ici pour valider votre inscription :</p>
             <label for="verification-code">Code de validation :</label>
             <input type="text" id="verification-code" placeholder="Entrez le code reçu">
             <button type="button" onclick="validateTelegramCode()">Valider le code</button>
