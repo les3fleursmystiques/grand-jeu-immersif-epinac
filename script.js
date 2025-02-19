@@ -17,36 +17,60 @@ document.getElementById("phone-number").addEventListener("input", function () {
     }
 });
 
-// Vérification du format du numéro de téléphone
-function validatePhoneNumber(phoneNumber) {
-    let regex = /^\+?[1-9]\d{7,14}$/;
-    return regex.test(phoneNumber) ? { valid: true, message: "✅ Format valide" }
-                                   : { valid: false, message: "❌ Format invalide. Utilisez + suivi du code pays." };
-}
+// Vérification stricte du format et de l'existence du numéro
+async function validatePhoneNumber(phoneNumber) {
+    if (!window.env || !window.env.ABSTRACT_API_KEY) {
+        console.error("❌ Clé API AbstractAPI manquante !");
+        return { valid: false, message: "❌ Impossible de vérifier le numéro. Problème de configuration." };
+    }
 
-// Vérifier la présence de Telegram avant l'inscription
-function checkTelegramInstallation() {
-    let confirmTelegram = confirm("⚠ Avez-vous bien installé Telegram ?\nToutes les instructions et validations seront envoyées dessus.");
-    return confirmTelegram;
-}
-
-// Envoyer un code de validation sur Telegram
-async function sendVerificationCode(phoneNumber) {
-    let verificationCode = Math.floor(100000 + Math.random() * 900000);
-    window.verificationCode = verificationCode;
-
-    let message = `🔑 **Code de validation pour votre inscription :** ${verificationCode}`;
-    let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${window.env.VITE_TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
+    let url = `https://phonevalidation.abstractapi.com/v1/?api_key=${window.env.ABSTRACT_API_KEY}&phone=${phoneNumber}`;
 
     try {
         let response = await fetch(url);
         let data = await response.json();
+        console.log("📞 Résultat API AbstractAPI :", data);
+
+        if (data.valid && data.number && data.number.length >= 10) {
+            return { valid: true, message: "✅ Numéro valide et existant." };
+        } else {
+            return { valid: false, message: "❌ Numéro invalide ou inexistant." };
+        }
+    } catch (error) {
+        console.error("❌ Erreur API AbstractAPI :", error);
+        return { valid: false, message: "⚠ Erreur de connexion à AbstractAPI." };
+    }
+}
+
+// Vérifier la présence de Telegram avant l'inscription
+function checkTelegramInstallation() {
+    let confirmTelegram = confirm("⚠ Avez-vous bien installé Telegram et activé votre identifiant public ?");
+    return confirmTelegram;
+}
+
+// Envoyer un code de validation au joueur via Telegram
+async function sendVerificationCode(playerTelegram) {
+    if (!playerTelegram.startsWith("@")) {
+        alert("❌ Erreur : L'identifiant Telegram doit commencer par '@'. Exemple : @monpseudo");
+        return false;
+    }
+
+    let verificationCode = Math.floor(100000 + Math.random() * 900000);
+    window.verificationCode = verificationCode;
+
+    let message = `🔑 **Code de validation pour votre inscription :** ${verificationCode}`;
+    let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${playerTelegram}&text=${encodeURIComponent(message)}`;
+
+    try {
+        let response = await fetch(url);
+        let data = await response.json();
+
         if (data.ok) {
-            alert("📩 Un code de validation a été envoyé sur Telegram. Veuillez le saisir ci-dessous.");
+            alert("📩 Un code de validation a été envoyé sur votre Telegram.");
             document.getElementById("verification-section").style.display = "block";
             return true;
         } else {
-            alert("❌ Erreur : Impossible d'envoyer le code via Telegram.");
+            alert("❌ Erreur : Impossible d'envoyer le code via Telegram. Vérifiez votre identifiant.");
             return false;
         }
     } catch (error) {
@@ -75,27 +99,28 @@ window.testTelegram = async function () {
 
     let teamName = document.getElementById("team-name").value;
     let phoneNumber = document.getElementById("phone-number").value;
+    let playerTelegram = document.getElementById("telegram-username").value;
     let participants = document.getElementById("participants").value;
 
-    if (!teamName || !phoneNumber || !participants) {
+    if (!teamName || !phoneNumber || !playerTelegram || !participants) {
         alert("❌ Erreur : Remplissez tous les champs !");
         return;
     }
 
-    let validation = validatePhoneNumber(phoneNumber);
+    let validation = await validatePhoneNumber(phoneNumber);
     if (!validation.valid) {
         alert(validation.message);
         return;
     }
 
-    let codeSent = await sendVerificationCode(phoneNumber);
+    let codeSent = await sendVerificationCode(playerTelegram);
     if (!codeSent) return;
 
     let checkInterval = setInterval(() => {
         if (window.telegramVerified) {
             clearInterval(checkInterval);
 
-            let message = `📌 **Nouvelle Inscription !**\n👥 **Équipe** : ${teamName}\n📞 **Téléphone** : ${phoneNumber}\n🎟️ **Participants** : ${participants}`;
+            let message = `📌 **Nouvelle Inscription !**\n👥 **Équipe** : ${teamName}\n📞 **Téléphone** : ${phoneNumber}\n🎟️ **Participants** : ${participants}\n💬 **Telegram Joueur** : ${playerTelegram}`;
             let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${window.env.VITE_TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
 
             fetch(url)
