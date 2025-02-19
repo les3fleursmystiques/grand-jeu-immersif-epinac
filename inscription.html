@@ -28,15 +28,23 @@
     <!-- Récupérer les variables Netlify via la fonction serverless -->
     <script>
         console.log("🔄 Chargement des variables d’environnement...");
+
         fetch("/.netlify/functions/env")
             .then(response => response.json())
             .then(data => {
                 window.env = {
                     VITE_TELEGRAM_BOT_TOKEN: data.VITE_TELEGRAM_BOT_TOKEN || "",
                     VITE_TELEGRAM_CHAT_ID: data.VITE_TELEGRAM_CHAT_ID || "",
-                    ABSTRACT_API_KEY: data.ABSTRACT_API_KEY || ""  // 🔹 Ajout de la clé AbstractAPI
+                    ABSTRACT_API_KEY: data.ABSTRACT_API_KEY || "",
+                    SMS_API_KEY: data.SMS_API_KEY || ""  // 🔹 Ajout de la clé SMS_API_KEY
                 };
+
                 console.log("🟢 Variables Netlify récupérées :", window.env);
+
+                // Vérification si SMS_API_KEY est bien récupérée
+                if (!window.env.SMS_API_KEY) {
+                    console.warn("⚠ Alerte : SMS_API_KEY est introuvable !");
+                }
             })
             .catch(error => {
                 console.error("❌ Erreur lors de la récupération des variables Netlify :", error);
