@@ -31,7 +31,8 @@ async function validatePhoneNumber(phoneNumber) {
         let data = await response.json();
         console.log("📞 Résultat API AbstractAPI :", data);
 
-        if (data.valid && data.number && data.number.length >= 10) {
+        // 🔹 Correction : on supprime la contrainte sur `data.number.length`
+        if (data.valid) {
             return { valid: true, message: "✅ Numéro valide et existant." };
         } else {
             return { valid: false, message: "❌ Numéro invalide ou inexistant." };
