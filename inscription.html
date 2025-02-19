@@ -9,6 +9,13 @@
 <body>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
+    <!-- ⚠ Message préventif sur l'utilisation de Telegram -->
+    <div id="telegram-warning" style="background-color: #ffcccb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+        <strong>⚠ IMPORTANT :</strong>
+        <p>Pour participer, vous devez obligatoirement avoir accès à <strong>Telegram</strong>, car toutes les informations et la validation se feront via cette application.</p>
+        <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram ici</a> si ce n'est pas encore fait.</p>
+    </div>
+
     <form id="registration-form">
         <label for="team-name">Nom de l'équipe :</label>
         <input type="text" id="team-name" name="team_name" required><br><br>
@@ -20,38 +27,19 @@
         <label for="participants">Nombre de participants :</label>
         <input type="number" id="participants" name="participants" min="1" required><br><br>
 
+        <!-- Section de validation du code Telegram -->
+        <div id="verification-section" style="display: none;">
+            <label for="verification-code">Code de validation :</label>
+            <input type="text" id="verification-code" placeholder="Entrez le code reçu">
+            <button type="button" onclick="validateTelegramCode()">Valider le code</button>
+        </div><br>
+
         <!-- BOUTONS : Test & Paiement -->
         <button type="button" onclick="testTelegram()">TEST - Envoi Telegram sans payer</button>
         <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
     </form>
 
-    <!-- Récupérer les variables Netlify via la fonction serverless -->
-    <script>
-        console.log("🔄 Chargement des variables d’environnement...");
-
-        fetch("/.netlify/functions/env")
-            .then(response => response.json())
-            .then(data => {
-                window.env = {
-                    VITE_TELEGRAM_BOT_TOKEN: data.VITE_TELEGRAM_BOT_TOKEN || "",
-                    VITE_TELEGRAM_CHAT_ID: data.VITE_TELEGRAM_CHAT_ID || "",
-                    ABSTRACT_API_KEY: data.ABSTRACT_API_KEY || "",
-                    SMS_API_KEY: data.SMS_API_KEY || ""  // 🔹 Ajout de la clé SMS_API_KEY
-                };
-
-                console.log("🟢 Variables Netlify récupérées :", window.env);
-
-                // Vérification si SMS_API_KEY est bien récupérée
-                if (!window.env.SMS_API_KEY) {
-                    console.warn("⚠ Alerte : SMS_API_KEY est introuvable !");
-                }
-            })
-            .catch(error => {
-                console.error("❌ Erreur lors de la récupération des variables Netlify :", error);
-            });
-    </script>
-
-    <!-- Charger le fichier JavaScript principal -->
+    <!-- Charger le fichier JavaScript -->
     <script src="/script.js" defer></script>
 
 </body>
