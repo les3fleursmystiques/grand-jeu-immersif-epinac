@@ -1,6 +1,9 @@
 // Récupérer les variables d’environnement depuis Netlify
 fetch("/.netlify/functions/env")
-    .then(response => response.text()) // Récupérer la réponse en texte brut
+    .then(response => {
+        console.log("🔎 Statut de la réponse Netlify :", response.status, response.statusText);
+        return response.text();
+    })
     .then(data => {
         console.log("🔎 Réponse brute de Netlify :", data);
 
@@ -8,7 +11,6 @@ fetch("/.netlify/functions/env")
             let env = JSON.parse(data); // Convertir en JSON
             console.log("✅ JSON parsé avec succès :", env);
 
-            // Vérifier si les variables sont bien récupérées
             if (!env || Object.keys(env).length === 0) {
                 console.error("❌ Erreur : Les variables d'environnement sont vides !");
                 return;
@@ -36,7 +38,7 @@ document.getElementById("phone-number").addEventListener("input", function () {
     }
 });
 
-// Fonction de validation du format du numéro de téléphone
+// Vérification du format du numéro de téléphone
 function validatePhoneNumber(phoneNumber) {
     let regex = /^\+?[1-9]\d{7,14}$/;
     return regex.test(phoneNumber) ? { valid: true, message: "✅ Format valide" }
@@ -45,6 +47,11 @@ function validatePhoneNumber(phoneNumber) {
 
 // Vérification du numéro via AbstractAPI
 async function checkPhoneNumberExists(phoneNumber) {
+    if (!window.env || !window.env.ABSTRACT_API_KEY) {
+        console.error("❌ Clé API AbstractAPI manquante !");
+        return { valid: false, message: "❌ Impossible de vérifier le numéro. Problème de configuration." };
+    }
+
     let url = `https://phonevalidation.abstractapi.com/v1/?api_key=${window.env.ABSTRACT_API_KEY}&phone=${phoneNumber}`;
 
     try {
@@ -62,10 +69,15 @@ async function checkPhoneNumberExists(phoneNumber) {
 
 // Envoi d'un SMS avec un code de validation
 async function sendVerificationSMS(phoneNumber) {
-    let verificationCode = Math.floor(100000 + Math.random() * 900000); // Générer un code à 6 chiffres
+    if (!window.env || !window.env.SMS_API_KEY) {
+        console.error("❌ Clé API SMS manquante !");
+        return false;
+    }
+
+    let verificationCode = Math.floor(100000 + Math.random() * 900000);
     window.verificationCode = verificationCode; // Stocker le code pour vérification
 
-    let url = `https://api.smsprovider.com/send?api_key=${window.env.SMS_API_KEY}&to=${phoneNumber}&message=Votre code de validation: ${verificationCode}`;
+    let url = `https://api.smsprovider.com/send?api_key=${window.env.SMS_API_KEY}&to=${phoneNumber}&message=Votre code de validation : ${verificationCode}`;
 
     try {
         let response = await fetch(url);
@@ -102,25 +114,21 @@ window.testTelegram = async function () {
         return;
     }
 
-    // Vérifier format
     let validation = validatePhoneNumber(phoneNumber);
     if (!validation.valid) {
         alert(validation.message);
         return;
     }
 
-    // Vérifier existence
     let check = await checkPhoneNumberExists(phoneNumber);
     if (!check.valid) {
         alert(check.message);
         return;
     }
 
-    // Envoyer le SMS de validation
     let smsSent = await sendVerificationSMS(phoneNumber);
     if (!smsSent) return;
 
-    // Attendre la validation du code
     let checkInterval = setInterval(() => {
         if (window.smsVerified) {
             clearInterval(checkInterval);
