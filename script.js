@@ -1,3 +1,8 @@
+// ✅ S'assurer que `console` est bien défini (évite les erreurs sur certains navigateurs)
+if (typeof console === "undefined") {
+    var console = { log: function() {}, error: function() {}, warn: function() {} };
+}
+
 // ✅ Charger les variables d’environnement depuis Netlify
 async function loadEnvVariables() {
     try {
@@ -7,11 +12,14 @@ async function loadEnvVariables() {
         console.log("✅ Variables Netlify récupérées :", env);
 
         // Vérification et assignation des variables
-        window.env = env || {}; // 🔹 Évite que `undefined` apparaisse
-
-        if (!window.env.VITE_TELEGRAM_BOT_TOKEN || !window.env.VITE_TELEGRAM_CHAT_ID) {
-            console.warn("⚠ Certaines variables Netlify sont manquantes !");
+        if (!env || typeof env !== "object") {
+            console.error("❌ Erreur : `env` ne contient pas d'objet valide !");
+            window.env = {};
+        } else {
+            window.env = env;
         }
+
+        console.log("🔍 Contenu final de window.env :", window.env);
     } catch (error) {
         console.error("❌ Erreur lors de la récupération des variables d’environnement :", error);
         window.env = {}; // 🔹 Empêche `undefined`
@@ -91,6 +99,11 @@ async function sendVerificationCodeToPlayer(playerTelegram) {
         return false;
     }
 }
+
+// ✅ Vérification finale de `window.env` après chargement
+setTimeout(() => {
+    console.log("🔍 Vérification après chargement :", window.env);
+}, 3000);
 
 // ✅ Tester si tout fonctionne
 console.log("✅ script.js chargé !");
