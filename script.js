@@ -35,7 +35,6 @@ async function validatePhoneNumber(phoneNumber) {
         return { valid: false, message: "❌ Impossible de vérifier le numéro." };
     }
 
-    // Ajouter +33 si le numéro commence par 0 et n'a pas de préfixe
     if (phoneNumber.startsWith("0") && !phoneNumber.startsWith("+")) {
         phoneNumber = "+33" + phoneNumber.substring(1);
     }
@@ -47,11 +46,8 @@ async function validatePhoneNumber(phoneNumber) {
         let data = await response.json();
         console.log("📞 Résultat API AbstractAPI :", data);
 
-        // Vérifications pour bloquer les numéros fictifs
         if (
             data.valid &&
-            data.format &&
-            data.format.international &&
             data.country &&
             data.country.code &&
             data.carrier &&
@@ -68,6 +64,21 @@ async function validatePhoneNumber(phoneNumber) {
     }
 }
 
+// ✅ Récupérer le chat_id de l'utilisateur avant d'envoyer un message
+async function getChatIdFromUsername(username) {
+    try {
+        let response = await fetch(`https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/getUpdates`);
+        let data = await response.json();
+        console.log("🔍 Réponse getUpdates :", data);
+
+        let user = data.result.find(update => update.message && update.message.from.username === username.replace("@", ""));
+        return user ? user.message.from.id : null;
+    } catch (error) {
+        console.error("❌ Erreur lors de la récupération du chat_id :", error);
+        return null;
+    }
+}
+
 // ✅ Envoyer un code de validation au JOUEUR via Telegram
 async function sendVerificationCodeToPlayer(playerTelegram) {
     if (!playerTelegram.startsWith("@")) {
@@ -75,11 +86,17 @@ async function sendVerificationCodeToPlayer(playerTelegram) {
         return false;
     }
 
+    let chatId = await getChatIdFromUsername(playerTelegram);
+    if (!chatId) {
+        alert("❌ Erreur : Le bot ne connaît pas cet utilisateur. Il doit d'abord lui envoyer un message.");
+        return false;
+    }
+
     let verificationCode = Math.floor(100000 + Math.random() * 900000);
     window.verificationCode = verificationCode;
 
     let message = `🔑 **Code de validation pour votre inscription :** ${verificationCode}\n\n📩 Répondez avec ce code sur le site pour finaliser votre inscription.`;
-    let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${playerTelegram}&text=${encodeURIComponent(message)}`;
+    let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
 
     try {
         let response = await fetch(url);
@@ -90,7 +107,7 @@ async function sendVerificationCodeToPlayer(playerTelegram) {
             document.getElementById("verification-section").style.display = "block";
             return true;
         } else {
-            alert("❌ Erreur : Impossible d'envoyer le code via Telegram. Vérifiez votre identifiant.");
+            alert("❌ Erreur : Impossible d'envoyer le code via Telegram.");
             return false;
         }
     } catch (error) {
@@ -112,9 +129,15 @@ function validateTelegramCode() {
 
 // ✅ Envoyer les questions du jeu au JOUEUR après validation
 async function sendGameQuestionsToPlayer(playerTelegram) {
+    let chatId = await getChatIdFromUsername(playerTelegram);
+    if (!chatId) {
+        alert("❌ Erreur : Impossible d'envoyer les questions, l'utilisateur n'est pas reconnu.");
+        return;
+    }
+
     let message = `🎮 **Bienvenue dans le Grand Jeu Immersif !**\n\n💬 Voici ta première énigme :\n\n"Quelle est la couleur du cheval blanc d'Henri IV ?" 🏇\n\nRéponds directement ici pour continuer l’aventure !`;
 
-    let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${playerTelegram}&text=${encodeURIComponent(message)}`;
+    let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
 
     try {
         let response = await fetch(url);
@@ -146,20 +169,9 @@ window.testTelegram = async function () {
     let codeSent = await sendVerificationCodeToPlayer(playerTelegram);
     if (!codeSent) return;
 
-    // Attendre la validation du joueur
     let checkInterval = setInterval(() => {
         if (window.telegramVerified) {
             clearInterval(checkInterval);
-
-            let message = `📌 **Nouvelle Inscription !**\n👥 **Équipe** : ${teamName}\n📞 **Téléphone** : ${phoneNumber}\n🎟️ **Participants** : ${participants}\n💬 **Telegram Joueur** : ${playerTelegram}`;
-            let url = `https://api.telegram.org/bot${window.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${window.env.VITE_TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => alert(data.ok ? "✅ Inscription validée !" : "❌ Erreur Telegram."))
-                .catch(error => alert("❌ Erreur réseau :", error));
-
-            // Envoyer les questions après validation
             sendGameQuestionsToPlayer(playerTelegram);
         }
     }, 1000);
