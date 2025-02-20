@@ -3,7 +3,6 @@ exports.handler = async function () {
     console.log("🔍 Vérification des variables d’environnement Netlify :", {
         VITE_TELEGRAM_BOT_TOKEN: process.env.VITE_TELEGRAM_BOT_TOKEN,
         VITE_TELEGRAM_CHAT_ID: process.env.VITE_TELEGRAM_CHAT_ID,
-        ABSTRACT_API_KEY: process.env.ABSTRACT_API_KEY
     });
 
     return {
@@ -12,7 +11,6 @@ exports.handler = async function () {
         body: JSON.stringify({
             VITE_TELEGRAM_BOT_TOKEN: process.env.VITE_TELEGRAM_BOT_TOKEN || "",
             VITE_TELEGRAM_CHAT_ID: process.env.VITE_TELEGRAM_CHAT_ID || "",
-            ABSTRACT_API_KEY: process.env.ABSTRACT_API_KEY || ""  // 🔹 Ajout de ABSTRACT_API_KEY
         })
     };
 };
