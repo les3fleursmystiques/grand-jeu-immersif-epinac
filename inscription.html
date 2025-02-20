@@ -9,6 +9,13 @@
 <body>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
+    <!-- ⚠ Message sur la construction du jeu -->
+    <div id="game-construction" style="background-color: #ffffcc; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+        <strong>🚧 Le Grand Jeu Immersif est en construction ! 🚧</strong>
+        <p>Nous travaillons actuellement sur l'organisation du jeu. Les inscriptions ne sont pas encore ouvertes.</p>
+        <p>💡 Restez connectés, nous serons ravis de vous revoir très bientôt pour l’aventure ! 🎉</p>
+    </div>
+
     <!-- ⚠ Message préventif sur l'utilisation de Telegram -->
     <div id="telegram-warning" style="background-color: #ffcccb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
         <strong>⚠ IMPORTANT :</strong>
@@ -33,7 +40,7 @@
         <label for="participants">Nombre de participants :</label>
         <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-        <!-- 🔹 Section de validation du code Telegram (modifiée pour plus de clarté) -->
+        <!-- 🔹 Section de validation du code Telegram -->
         <div id="verification-section" style="display: none; background-color: #e3f2fd; padding: 10px; border-radius: 5px;">
             <h3>📩 Vérification de votre inscription</h3>
             <p>Un code de validation vous a été envoyé sur votre compte Telegram. Entrez-le ici pour valider votre inscription :</p>
@@ -42,13 +49,56 @@
             <button type="button" onclick="validateTelegramCode()">Valider le code</button>
         </div><br>
 
-        <!-- BOUTONS : Test & Paiement -->
-        <button type="button" onclick="testTelegram()">TEST - Envoi Telegram sans payer</button>
-        <button type="button" onclick="redirectToPayPal(event)">S'inscrire et payer avec PayPal</button>
+        <!-- BOUTONS : Test & Paiement désactivé -->
+        <button type="button" id="test-btn" onclick="testTelegram()" disabled>TEST - Envoi Telegram sans payer</button>
+        <button type="button" id="pay-btn" disabled style="background-color: grey; cursor: not-allowed;">
+            ⛔ Inscription temporairement fermée ⛔
+        </button>
     </form>
 
     <!-- Charger le fichier JavaScript -->
     <script src="/script.js" defer></script>
+
+    <script>
+        // ✅ Forcer le bon format du numéro de téléphone
+        document.addEventListener("DOMContentLoaded", function () {
+            let phoneInput = document.getElementById("phone-number");
+            let telegramInput = document.getElementById("telegram-username");
+            let testButton = document.getElementById("test-btn");
+
+            if (phoneInput) {
+                phoneInput.addEventListener("focus", function () {
+                    if (!phoneInput.value.startsWith("+")) {
+                        phoneInput.value = "+33" + phoneInput.value.replace(/^0/, "");
+                    }
+                });
+
+                phoneInput.addEventListener("input", function () {
+                    if (phoneInput.value === "+") {
+                        phoneInput.value = "+33";
+                    }
+                });
+            }
+
+            // ✅ Vérifier que l'identifiant Telegram commence par @
+            if (telegramInput) {
+                telegramInput.addEventListener("blur", function () {
+                    if (!telegramInput.value.startsWith("@")) {
+                        telegramInput.value = "@" + telegramInput.value;
+                    }
+                });
+            }
+
+            // ✅ Activer les boutons uniquement si tous les champs sont remplis (sauf PayPal qui reste désactivé)
+            document.getElementById("registration-form").addEventListener("input", function () {
+                if (phoneInput.value && telegramInput.value && document.getElementById("team-name").value && document.getElementById("participants").value) {
+                    testButton.removeAttribute("disabled");
+                } else {
+                    testButton.setAttribute("disabled", "true");
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
