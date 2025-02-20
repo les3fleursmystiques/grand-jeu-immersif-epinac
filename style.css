@@ -1,5 +1,35 @@
+/* Fond du site */
 body {
     background-color: #D8BFD8; /* Parme */
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
 }
 
-body { font-family: Arial, sans-serif; text-align: center; padding: 50px; } h1 { color: #333; }
+/* Titre principal */
+h1 {
+    color: #333;
+}
+
+/* Logo Myssea */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.header img {
+    width: 200px; /* Ajuster la taille si nécessaire */
+}
+
+/* Style des boutons */
+.button {
+    display: inline-block;
+    background-color: #6A0DAD; /* Violet foncé */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.button:hover {
+    background-color: #540888;
+}
