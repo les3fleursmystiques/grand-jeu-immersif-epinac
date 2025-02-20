@@ -9,28 +9,20 @@
 <body>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
-    <!-- ⚠ Message sur la construction du jeu -->
-    <div id="game-construction" style="background-color: #ffffcc; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-        <strong>🚧 Le Grand Jeu Immersif est en construction ! 🚧</strong>
-        <p>Nous travaillons actuellement sur l'organisation du jeu. Les inscriptions ne sont pas encore ouvertes.</p>
-        <p>💡 Restez connectés, nous serons ravis de vous revoir très bientôt pour l’aventure ! 🎉</p>
-    </div>
-
     <!-- ⚠ Message préventif sur l'utilisation de Telegram -->
     <div id="telegram-warning" style="background-color: #ffcccb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
         <strong>⚠ IMPORTANT :</strong>
-        <p>Pour participer, vous devez obligatoirement avoir accès à <strong>Telegram</strong>, car toutes les informations et la validation se feront via cette application.</p>
+        <p>Pour participer, vous devez obligatoirement avoir un <strong>pseudo Telegram</strong> et avoir contacté notre bot.</p>
         <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram ici</a> si ce n'est pas encore fait.</p>
         <p>💬 <strong>Avant de vous inscrire, cliquez sur ce lien et envoyez "/start" à notre bot :</strong> <a href="https://t.me/EpinacetsonGrandJeu_bot" target="_blank">@EpinacetsonGrandJeu_bot</a></p>
+        <p>🔹 <a href="https://faq-telegram.com/creer-pseudo-telegram" target="_blank">Comment créer un pseudo sur Telegram ?</a></p>
     </div>
 
     <form id="registration-form">
         <label for="team-name">Nom de l'équipe :</label>
         <input type="text" id="team-name" name="team_name" required><br><br>
 
-        <label for="phone-number">Numéro de téléphone :</label>
-        <input type="tel" id="phone-number" name="phone_number" required placeholder="Ex : +33612345678"><br><br>
-        <p style="color: red;"><strong>⚠ Le numéro de téléphone est obligatoire et doit être un numéro valide.</strong></p>
+        <!-- ⚠ Suppression du champ numéro de téléphone -->
 
         <!-- ⚠ Champ obligatoire : Identifiant Telegram du joueur -->
         <label for="telegram-username">Nom d'utilisateur Telegram :</label>
@@ -60,27 +52,11 @@
     <script src="/script.js" defer></script>
 
     <script>
-        // ✅ Forcer le bon format du numéro de téléphone
+        // ✅ Vérifier que l'identifiant Telegram commence par @
         document.addEventListener("DOMContentLoaded", function () {
-            let phoneInput = document.getElementById("phone-number");
             let telegramInput = document.getElementById("telegram-username");
             let testButton = document.getElementById("test-btn");
 
-            if (phoneInput) {
-                phoneInput.addEventListener("focus", function () {
-                    if (!phoneInput.value.startsWith("+")) {
-                        phoneInput.value = "+33" + phoneInput.value.replace(/^0/, "");
-                    }
-                });
-
-                phoneInput.addEventListener("input", function () {
-                    if (phoneInput.value === "+") {
-                        phoneInput.value = "+33";
-                    }
-                });
-            }
-
-            // ✅ Vérifier que l'identifiant Telegram commence par @
             if (telegramInput) {
                 telegramInput.addEventListener("blur", function () {
                     if (!telegramInput.value.startsWith("@")) {
@@ -89,9 +65,9 @@
                 });
             }
 
-            // ✅ Activer les boutons uniquement si tous les champs sont remplis (sauf PayPal qui reste désactivé)
+            // ✅ Activer le bouton TEST uniquement si les champs sont remplis
             document.getElementById("registration-form").addEventListener("input", function () {
-                if (phoneInput.value && telegramInput.value && document.getElementById("team-name").value && document.getElementById("participants").value) {
+                if (telegramInput.value && document.getElementById("team-name").value && document.getElementById("participants").value) {
                     testButton.removeAttribute("disabled");
                 } else {
                     testButton.setAttribute("disabled", "true");
