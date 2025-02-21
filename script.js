@@ -23,15 +23,24 @@ async function loadEnvVariables() {
         }
 
         console.log("🔍 Contenu final de window.env :", window.env);
+        return window.env; // ✅ Retourne les variables une fois chargées
     } catch (error) {
         console.error("❌ Erreur lors de la récupération des variables d’environnement :", error);
         window.env = {};
+        return window.env;
     }
 }
 
-// ✅ Lancer la récupération des variables et tester le résultat
-loadEnvVariables().then(() => {
-    console.log("✅ Test Debug : window.env après chargement →", window.env);
+// ✅ Lancer la récupération des variables et attendre la fin du chargement
+loadEnvVariables().then(env => {
+    console.log("✅ Test Debug : window.env après chargement →", env);
+
+    // Vérifier si les variables sont bien assignées
+    if (!env.VITE_TELEGRAM_BOT_TOKEN || !env.VITE_TELEGRAM_CHAT_ID) {
+        console.warn("⚠ Attention : une variable Netlify semble manquante !");
+    } else {
+        console.log("🎉 Les variables sont bien récupérées et prêtes à être utilisées !");
+    }
 }).catch(error => {
     console.error("❌ Erreur lors de l'exécution de loadEnvVariables() :", error);
 });
@@ -40,7 +49,7 @@ loadEnvVariables().then(() => {
 setTimeout(() => {
     console.log("🔍 Vérification après chargement :", window.env);
     if (!window.env.VITE_TELEGRAM_BOT_TOKEN || !window.env.VITE_TELEGRAM_CHAT_ID) {
-        console.warn("⚠ Attention : une variable Netlify semble manquante !");
+        console.warn("⚠ Attention : une variable Netlify semble toujours manquante !");
     }
 }, 3000);
 
