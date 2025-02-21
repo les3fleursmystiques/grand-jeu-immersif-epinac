@@ -29,8 +29,12 @@ async function loadEnvVariables() {
     }
 }
 
-// Appeler la fonction au chargement du script
-loadEnvVariables();
+// ✅ Lancer la récupération des variables et tester le résultat
+loadEnvVariables().then(() => {
+    console.log("✅ Test Debug : window.env après chargement →", window.env);
+}).catch(error => {
+    console.error("❌ Erreur lors de l'exécution de loadEnvVariables() :", error);
+});
 
 // ✅ Vérification finale après chargement pour éviter `undefined`
 setTimeout(() => {
