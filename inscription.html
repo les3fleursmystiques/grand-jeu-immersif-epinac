@@ -20,7 +20,7 @@
         <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram</a></p>
         <p>💬 Avant de vous inscrire, envoyez <strong>/start</strong> à :
             <a href="https://t.me/mysseatest_bot" target="_blank">@mysseatest_bot</a></p>
-        <p>🔹 <a href="https://www.googe.com/search?q=créer+un+pseudo+Telegram" target="_blank">Comment créer un pseudo Telegram ?</a></p>
+        <p>🔹 <a href="https://www.google.com/search?q=créer+un+pseudo+Telegram" target="_blank">Comment créer un pseudo Telegram ?</a></p>
     </div>
 
     <form id="registration-form">
@@ -35,7 +35,7 @@
         <input type="number" id="participants" name="participants" min="1" required><br><br>
 
         <label for="promo-code">Code promo (facultatif) :</label>
-        <input type="text" id="promo-code" name="promo_code" placeholder="Ex: MYS-2J-Q5W7"><br><br>
+        <input type="text" id="promo-code" name="promo_code" placeholder="Ex: MYSSEPA2"><br><br>
 
         <p id="promo-warning" style="color: red; display: none;"></p>
 
@@ -52,7 +52,7 @@
             "MYSSEADMINITY": Infinity
         };
 
-        const paypalLink = "https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR"; // Remplace par ton lien PayPal
+        const paypalLink = "https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR";
 
         document.addEventListener("DOMContentLoaded", function () {
             const telegramInput = document.getElementById("telegram-username");
@@ -73,7 +73,6 @@
                 const team = teamInput.value.trim();
                 const count = parseInt(participantsInput.value) || 0;
                 const code = promoInput.value.trim().toUpperCase();
-
                 const isFilled = username && team && count > 0;
 
                 if (!isFilled) {
@@ -81,14 +80,20 @@
                     return;
                 }
 
+                // Cas spécial : accès admin (accès-reel.html)
+                if (code === "MYSSEADMINITY") {
+                    window.location.href = "acces-reel.html";
+                    return;
+                }
+
+                // Codes promo classiques
                 if (code in validPromoCodes) {
                     const maxAllowed = validPromoCodes[code];
                     if (count <= maxAllowed) {
                         warningText.style.display = "none";
-                        enablePayBtn("✅ Code promo accepté — inscription gratuite", null);
+                        enablePayBtn("✅ Code promo accepté — inscription gratuite", "acces.html");
                     } else {
-                        const message = `⚠ Le code "${code}" est limité à ${maxAllowed} participant(s). Veuillez régler la différence.`;
-                        warningText.innerText = message;
+                        warningText.innerText = `⚠ Le code "${code}" est limité à ${maxAllowed} participant(s). Veuillez régler la différence.`;
                         warningText.style.display = "block";
                         enablePayBtn("➡ Payer la différence sur PayPal", paypalLink);
                     }
@@ -116,8 +121,11 @@
                 payBtn.style.backgroundColor = "#4CAF50";
                 payBtn.style.cursor = "pointer";
                 payBtn.onclick = function () {
-                    if (link) window.open(link, "_blank");
-                    else alert("Inscription validée avec votre code promo !");
+                    if (link) {
+                        window.open(link, "_blank");
+                    } else {
+                        alert("Inscription validée !");
+                    }
                 };
             }
         });
