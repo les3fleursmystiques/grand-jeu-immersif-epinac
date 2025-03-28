@@ -1,35 +1,84 @@
-/* Fond du site */
+/* Fond général */
 body {
-    background-color: #D8BFD8; /* Parme */
+    background-color: #D8BFD8; /* Parme doux */
     font-family: Arial, sans-serif;
     text-align: center;
-    padding: 50px;
+    margin: 0;
+    padding: 40px 20px;
 }
 
-/* Titre principal */
-h1 {
-    color: #333;
-}
-
-/* Logo Myssea */
+/* En-tête et logo */
 .header {
     text-align: center;
     margin-bottom: 20px;
 }
 .header img {
-    width: 200px; /* Ajuster la taille si nécessaire */
+    max-width: 200px;
 }
 
-/* Style des boutons */
-.button {
+.logo-home img {
+    max-width: 300px; /* Plus grand sur l'accueil */
+}
+
+/* Titres */
+h1, h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Navigation */
+nav a {
+    margin: 0 10px;
+    color: #6A0DAD;
+    text-decoration: none;
+    font-weight: bold;
+}
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Boutons */
+.button, button {
     display: inline-block;
-    background-color: #6A0DAD; /* Violet foncé */
+    background-color: #6A0DAD;
     color: white;
     padding: 10px 20px;
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
 }
-.button:hover {
+.button:hover, button:hover {
     background-color: #540888;
+}
+
+/* Formulaires */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: left;
+}
+form input, form select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Messages info/alerte */
+#telegram-warning {
+    background-color: #ffcccb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+#verification-section {
+    background-color: #e3f2fd;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
 }

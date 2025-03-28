@@ -7,74 +7,78 @@
 </head>
 
 <body>
+    <div class="header">
+   	 <img src="images/logo-myssea.png" alt="Logo Myssea">
+    </div>
     <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
-    <!-- ⚠ Message préventif sur l'utilisation de Telegram -->
-    <div id="telegram-warning" style="background-color: #ffcccb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+    <!-- Avertissement Telegram -->
+    <div style="background-color: #ffcccb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
         <strong>⚠ IMPORTANT :</strong>
-        <p>Pour participer, vous devez obligatoirement avoir un <strong>pseudo Telegram</strong> et avoir contacté notre bot.</p>
-        <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram ici</a> si ce n'est pas encore fait.</p>
-        <p>💬 <strong>Avant de vous inscrire, cliquez sur ce lien et envoyez "/start" à notre bot :</strong> <a href="https://t.me/EpinacetsonGrandJeu_bot" target="_blank">@EpinacetsonGrandJeu_bot</a></p>
-        <p>🔹 <a href="https://faq-telegram.com/creer-pseudo-telegram" target="_blank">Comment créer un pseudo sur Telegram ?</a></p>
+        <p>Pour participer, vous devez avoir un <strong>pseudo Telegram</strong> et avoir contacté notre bot.</p>
+        <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram ici</a></p>
+        <p>💬 Avant de vous inscrire, cliquez ici et envoyez "/start" à notre bot :
+            <a href="https://t.me/EpinacetsonGrandJeu_bot" target="_blank">@EpinacetsonGrandJeu_bot</a></p>
+        <p>🔹 <a href="https://faq-telegram.com/creer-pseudo-telegram" target="_blank">Créer un pseudo Telegram</a></p>
     </div>
 
     <form id="registration-form">
-        <label for="team-name">Nom de l'équipe :</label>
+        <label for="team-name">Nom de l'équipe :</label><br>
         <input type="text" id="team-name" name="team_name" required><br><br>
 
-        <!-- ⚠ Suppression du champ numéro de téléphone -->
-
-        <!-- ⚠ Champ obligatoire : Identifiant Telegram du joueur -->
-        <label for="telegram-username">Nom d'utilisateur Telegram :</label>
+        <label for="telegram-username">Nom d'utilisateur Telegram :</label><br>
         <input type="text" id="telegram-username" name="telegram_username" required placeholder="Ex: @monpseudo"><br><br>
-        <p style="color: red;"><strong>⚠ Vous devez entrer votre identifiant Telegram correctement (ex: @votrePseudo) pour recevoir le code de validation.</strong></p>
+        <p style="color: red;"><strong>⚠ Entrez correctement votre identifiant Telegram (ex: @votrePseudo).</strong></p>
 
-        <label for="participants">Nombre de participants :</label>
+        <label for="participants">Nombre de participants :</label><br>
         <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-        <!-- 🔹 Section de validation du code Telegram -->
-        <div id="verification-section" style="display: none; background-color: #e3f2fd; padding: 10px; border-radius: 5px;">
-            <h3>📩 Vérification de votre inscription</h3>
-            <p>Un code de validation vous a été envoyé sur votre compte Telegram. Entrez-le ici pour valider votre inscription :</p>
-            <label for="verification-code">Code de validation :</label>
-            <input type="text" id="verification-code" placeholder="Entrez le code reçu">
-            <button type="button" onclick="validateTelegramCode()">Valider le code</button>
-        </div><br>
+        <!-- Code promo -->
+        <label for="promo-code">Code promo (facultatif) :</label><br>
+        <input type="text" id="promo-code" name="promo_code" placeholder="Ex: TEST2025"><br><br>
 
-        <!-- BOUTONS : Test & Paiement désactivé -->
-        <button type="button" id="test-btn" onclick="testTelegram()" disabled>TEST - Envoi Telegram sans payer</button>
+        <!-- Bouton de paiement -->
         <button type="button" id="pay-btn" disabled style="background-color: grey; cursor: not-allowed;">
             ⛔ Inscription temporairement fermée ⛔
         </button>
     </form>
 
-    <!-- Charger le fichier JavaScript -->
-    <script src="/script.js" defer></script>
-
+    <!-- Script intégré -->
     <script>
-        // ✅ Vérifier que l'identifiant Telegram commence par @
+        const validPromoCodes = ["TEST2025", "GRATUIT", "EPINAC2025"];
+
         document.addEventListener("DOMContentLoaded", function () {
-            let telegramInput = document.getElementById("telegram-username");
-            let testButton = document.getElementById("test-btn");
+            const telegramInput = document.getElementById("telegram-username");
+            const teamInput = document.getElementById("team-name");
+            const participantsInput = document.getElementById("participants");
+            const promoInput = document.getElementById("promo-code");
+            const payBtn = document.getElementById("pay-btn");
 
-            if (telegramInput) {
-                telegramInput.addEventListener("blur", function () {
-                    if (!telegramInput.value.startsWith("@")) {
-                        telegramInput.value = "@" + telegramInput.value;
-                    }
-                });
-            }
+            // Ajouter @ si oublié
+            telegramInput.addEventListener("blur", function () {
+                if (!telegramInput.value.startsWith("@")) {
+                    telegramInput.value = "@" + telegramInput.value;
+                }
+            });
 
-            // ✅ Activer le bouton TEST uniquement si les champs sont remplis
+            // Activer bouton si tous les champs sont remplis + code promo valide
             document.getElementById("registration-form").addEventListener("input", function () {
-                if (telegramInput.value && document.getElementById("team-name").value && document.getElementById("participants").value) {
-                    testButton.removeAttribute("disabled");
+                const isFilled = telegramInput.value && teamInput.value && participantsInput.value;
+                const promoCode = promoInput.value.trim().toUpperCase();
+
+                if (isFilled && validPromoCodes.includes(promoCode)) {
+                    payBtn.innerHTML = "✅ Code promo accepté — Jouez gratuitement";
+                    payBtn.disabled = false;
+                    payBtn.style.backgroundColor = "#4CAF50";
+                    payBtn.style.cursor = "pointer";
                 } else {
-                    testButton.setAttribute("disabled", "true");
+                    payBtn.innerHTML = "⛔ Inscription temporairement fermée ⛔";
+                    payBtn.disabled = true;
+                    payBtn.style.backgroundColor = "grey";
+                    payBtn.style.cursor = "not-allowed";
                 }
             });
         });
     </script>
-
 </body>
 </html>
