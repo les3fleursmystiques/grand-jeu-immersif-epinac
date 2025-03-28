@@ -4,48 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription au Grand Jeu Immersif</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    	<div class="header">
-   	 	<img src="images/logo-myssea.png" alt="Logo Myssea">
-    	</div>
-    	<h1>Inscription au Grand Jeu Immersif à Épinac</h1>
+    <div class="header">
+        <img src="images/logo-myssea.png" alt="Logo Myssea">
+    </div>
 
-    <!-- Avertissement Telegram -->
-    <div style="background-color: #ffcccb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+    <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
+
+    <div id="telegram-warning">
         <strong>⚠ IMPORTANT :</strong>
-        <p>Pour participer, vous devez avoir un <strong>pseudo Telegram</strong> et avoir contacté notre bot.</p>
-        <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram ici</a></p>
-        <p>💬 Avant de vous inscrire, cliquez ici et envoyez "/start" à notre bot :
+        <p>Vous devez avoir un <strong>pseudo Telegram</strong> et avoir contacté notre bot.</p>
+        <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram</a></p>
+        <p>💬 Avant de vous inscrire, envoyez <strong>/start</strong> à :
             <a href="https://t.me/EpinacetsonGrandJeu_bot" target="_blank">@EpinacetsonGrandJeu_bot</a></p>
         <p>🔹 <a href="https://faq-telegram.com/creer-pseudo-telegram" target="_blank">Créer un pseudo Telegram</a></p>
     </div>
 
     <form id="registration-form">
-        <label for="team-name">Nom de l'équipe :</label><br>
+        <label for="team-name">Nom de l'équipe :</label>
         <input type="text" id="team-name" name="team_name" required><br><br>
 
-        <label for="telegram-username">Nom d'utilisateur Telegram :</label><br>
+        <label for="telegram-username">Nom d'utilisateur Telegram :</label>
         <input type="text" id="telegram-username" name="telegram_username" required placeholder="Ex: @monpseudo"><br><br>
-        <p style="color: red;"><strong>⚠ Entrez correctement votre identifiant Telegram (ex: @votrePseudo).</strong></p>
+        <p style="color: red;"><strong>⚠ Entrez correctement votre identifiant Telegram (ex: @votrePseudo)</strong></p>
 
-        <label for="participants">Nombre de participants :</label><br>
+        <label for="participants">Nombre de participants :</label>
         <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-        <!-- Code promo -->
-        <label for="promo-code">Code promo (facultatif) :</label><br>
-        <input type="text" id="promo-code" name="promo_code" placeholder="Ex: TEST2025"><br><br>
+        <label for="promo-code">Code promo (facultatif) :</label>
+        <input type="text" id="promo-code" name="promo_code" placeholder="Ex: MYS-2J-Q5W7"><br><br>
 
-        <!-- Bouton de paiement -->
+        <p id="promo-warning" style="color: red; display: none;"></p>
+
         <button type="button" id="pay-btn" disabled style="background-color: grey; cursor: not-allowed;">
             ⛔ Inscription temporairement fermée ⛔
         </button>
     </form>
 
-    <!-- Script intégré -->
     <script>
-        const validPromoCodes = ["TEST2025", "GRATUIT", "EPINAC2025"];
+        const validPromoCodes = {
+            "MYSSEPA1": 1,
+            "MYSSEPA2": 2,
+            "MYSSEPRO": 5,
+            "MYSSEADMINITY": Infinity
+        };
+
+        const paypalLink = "https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR"; // Remplace par ton lien PayPal
 
         document.addEventListener("DOMContentLoaded", function () {
             const telegramInput = document.getElementById("telegram-username");
@@ -53,31 +60,66 @@
             const participantsInput = document.getElementById("participants");
             const promoInput = document.getElementById("promo-code");
             const payBtn = document.getElementById("pay-btn");
+            const warningText = document.getElementById("promo-warning");
 
-            // Ajouter @ si oublié
             telegramInput.addEventListener("blur", function () {
                 if (!telegramInput.value.startsWith("@")) {
                     telegramInput.value = "@" + telegramInput.value;
                 }
             });
 
-            // Activer bouton si tous les champs sont remplis + code promo valide
             document.getElementById("registration-form").addEventListener("input", function () {
-                const isFilled = telegramInput.value && teamInput.value && participantsInput.value;
-                const promoCode = promoInput.value.trim().toUpperCase();
+                const username = telegramInput.value.trim();
+                const team = teamInput.value.trim();
+                const count = parseInt(participantsInput.value) || 0;
+                const code = promoInput.value.trim().toUpperCase();
 
-                if (isFilled && validPromoCodes.includes(promoCode)) {
-                    payBtn.innerHTML = "✅ Code promo accepté — Jouez gratuitement";
-                    payBtn.disabled = false;
-                    payBtn.style.backgroundColor = "#4CAF50";
-                    payBtn.style.cursor = "pointer";
+                const isFilled = username && team && count > 0;
+
+                if (!isFilled) {
+                    disablePayBtn("⛔ Inscription temporairement fermée ⛔");
+                    return;
+                }
+
+                if (code in validPromoCodes) {
+                    const maxAllowed = validPromoCodes[code];
+                    if (count <= maxAllowed) {
+                        warningText.style.display = "none";
+                        enablePayBtn("✅ Code promo accepté — inscription gratuite", null);
+                    } else {
+                        const message = `⚠ Le code "${code}" est limité à ${maxAllowed} participant(s). Veuillez régler la différence.`;
+                        warningText.innerText = message;
+                        warningText.style.display = "block";
+                        enablePayBtn("➡ Payer la différence sur PayPal", paypalLink);
+                    }
+                } else if (code === "") {
+                    warningText.style.display = "none";
+                    enablePayBtn("➡ Payer sur PayPal", paypalLink);
                 } else {
-                    payBtn.innerHTML = "⛔ Inscription temporairement fermée ⛔";
-                    payBtn.disabled = true;
-                    payBtn.style.backgroundColor = "grey";
-                    payBtn.style.cursor = "not-allowed";
+                    warningText.innerText = `⚠ Code promo non reconnu.`;
+                    warningText.style.display = "block";
+                    disablePayBtn("⛔ Inscription temporairement fermée ⛔");
                 }
             });
+
+            function disablePayBtn(label) {
+                payBtn.innerText = label;
+                payBtn.disabled = true;
+                payBtn.style.backgroundColor = "grey";
+                payBtn.style.cursor = "not-allowed";
+                payBtn.onclick = null;
+            }
+
+            function enablePayBtn(label, link) {
+                payBtn.innerText = label;
+                payBtn.disabled = false;
+                payBtn.style.backgroundColor = "#4CAF50";
+                payBtn.style.cursor = "pointer";
+                payBtn.onclick = function () {
+                    if (link) window.open(link, "_blank");
+                    else alert("Inscription validée avec votre code promo !");
+                };
+            }
         });
     </script>
 </body>
