@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inscription au Grand Jeu Immersif</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <div class="header">
-    <img src="images/logo-myssea.png" alt="Logo Myssea">
+    <img src="images/logo-myssea.png" alt="Logo Myssea" />
   </div>
 
   <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
@@ -18,37 +18,26 @@
     <strong>⚠ IMPORTANT :</strong>
     <p>Vous devez avoir un <strong>pseudo Telegram</strong> et avoir contacté notre bot.</p>
     <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram</a></p>
-    <p>🔹 <a href="https://www.google.com/search?q=créer+un+pseudo+Telegram" target="_blank">Comment créer un pseudo Telegram ?</a></p>
+    <p>🔹 <a href="https://www.google.com/search?q=créer+un+pseudo+Telegram" target="_blank">Créer un pseudo Telegram</a></p>
   </div>
 
   <form id="registration-form">
     <label for="team-name">Nom de l'équipe :</label>
-    <input type="text" id="team-name" name="team_name" required><br><br>
+    <input type="text" id="team-name" required /><br><br>
 
     <label for="telegram-username">Nom d'utilisateur Telegram :</label>
-    <input type="text" id="telegram-username" name="telegram_username" required placeholder="Ex: @monpseudo"><br><br>
+    <input type="text" id="telegram-username" required placeholder="Ex: @monpseudo" /><br><br>
     <p style="color: red;"><strong>⚠ Entrez correctement votre identifiant Telegram (ex: @votrePseudo)</strong></p>
 
     <label for="participants">Nombre de participants :</label>
-    <select id="participants" name="participants" required>
-      <option value="">-- Sélectionnez --</option>
-      <option value="1">1 joueur</option>
-      <option value="2">2 joueurs</option>
-      <option value="3">3 joueurs</option>
-      <option value="4">4 joueurs</option>
-      <option value="5">5 joueurs</option>
-    </select><br><br>
+    <input type="number" id="participants" min="1" max="5" required /><br><br>
 
-    <!-- Champ code promo discret -->
-    <label for="promo-code" style="font-weight: normal; color: #555; font-size: 0.9em;">Code promo (facultatif) :</label>
-    <input type="text" id="promo-code" name="promo_code" placeholder="Code promo (facultatif)" style="opacity: 0.8;"><br>
+    <label for="promo-code">Code promo (facultatif) :</label>
+    <input type="text" id="promo-code" placeholder="Clique ici pour entrer un code" /><br><br>
 
     <p id="promo-warning" style="color: red; display: none;"></p>
 
-    <div id="payment-section" style="display: none;">
-      <p><strong>Tarif :</strong> <span id="tarif-text"></span></p>
-      <button type="button" id="payment-btn" class="btn">➡ Payer par carte bancaire</button>
-    </div>
+    <div id="buttons"></div>
   </form>
 
   <script>
@@ -60,60 +49,55 @@
     };
 
     const stripeLinks = {
-      1: "https://buy.stripe.com/test_eVa29Ag6I69S3oAbII",
-      2: "https://buy.stripe.com/test_9AQ5lM1bO69S2kw289",
-      3: "https://buy.stripe.com/test_bIY4hIg6IbucbV64gi",
-      4: "https://buy.stripe.com/test_28oeWm4o09m42kwbIL",
-      5: "https://buy.stripe.com/test_7sI3dEg6I41K6AM9AE"
+      1: "https://buy.stripe.com/5kA6Gx6X8ZY6mQ004k",
+      2: "https://buy.stripe.com/7e1sX5Eva42TgU06or",
+      3: "https://buy.stripe.com/eVaaGxd6X0tshU002d",
+      4: "https://buy.stripe.com/28og0Reb1b864eleUV",
+      5: "https://buy.stripe.com/8wMOEfa5R00VbYc8wE"
     };
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const form = document.getElementById("registration-form");
-      const participants = document.getElementById("participants");
-      const promoInput = document.getElementById("promo-code");
+    document.getElementById("telegram-username").addEventListener("blur", function () {
+      const input = this;
+      if (!input.value.startsWith("@")) {
+        input.value = "@" + input.value;
+      }
+    });
+
+    document.getElementById("registration-form").addEventListener("input", function () {
+      const team = document.getElementById("team-name").value.trim();
+      const pseudo = document.getElementById("telegram-username").value.trim();
+      const participants = parseInt(document.getElementById("participants").value) || 0;
+      const code = document.getElementById("promo-code").value.trim().toUpperCase();
       const warning = document.getElementById("promo-warning");
-      const tarifText = document.getElementById("tarif-text");
-      const paymentBtn = document.getElementById("payment-btn");
-      const paymentSection = document.getElementById("payment-section");
+      const btnZone = document.getElementById("buttons");
 
-      form.addEventListener("input", () => {
-        const count = parseInt(participants.value);
-        const promo = promoInput.value.trim().toUpperCase();
-        warning.style.display = "none";
+      warning.style.display = "none";
+      btnZone.innerHTML = "";
 
-        if (!count) {
-          paymentSection.style.display = "none";
-          return;
-        }
+      if (!team || !pseudo || participants < 1 || participants > 5) return;
 
-        if (promo && promo in validPromoCodes) {
-          const maxAllowed = validPromoCodes[promo];
-          if (count <= maxAllowed) {
-            tarifText.textContent = "Accès gratuit avec code promo";
-            paymentBtn.innerText = "✅ Valider et accéder au jeu";
-            paymentBtn.onclick = () => {
-              alert("Inscription validée avec code promo !");
-              window.location.href = "acces-reel.html";
-            };
-            paymentSection.style.display = "block";
-          } else {
-            warning.innerText = `⚠ Code promo limité à ${maxAllowed} joueur(s).`;
-            warning.style.display = "block";
-            paymentSection.style.display = "none";
-          }
-        } else if (promo && !(promo in validPromoCodes)) {
-          warning.innerText = "⚠ Code promo non reconnu.";
-          warning.style.display = "block";
-          paymentSection.style.display = "none";
+      if (code in validPromoCodes) {
+        const max = validPromoCodes[code];
+        if (participants <= max) {
+          btnZone.innerHTML = `<p style="color: green;">✅ Code promo accepté</p><p>Accès autorisé sans paiement.</p><a href="acces-reel.html" class="btn">Commencer le jeu</a>`;
         } else {
-          tarifText.textContent = stripeLinks[count] ? `${count * 5} €` : "";
-          paymentBtn.innerText = "➡ Payer par carte bancaire";
-          paymentBtn.onclick = () => {
-            window.location.href = stripeLinks[count];
-          };
-          paymentSection.style.display = "block";
+          warning.innerText = `⚠ Code limité à ${max} joueur(s). Payer la différence.`;
+          warning.style.display = "block";
+          addPayButton(participants);
         }
-      });
+      } else if (code === "") {
+        addPayButton(participants);
+      } else {
+        warning.innerText = "⚠ Code promo non reconnu.";
+        warning.style.display = "block";
+      }
+
+      function addPayButton(p) {
+        const url = stripeLinks[p];
+        if (url) {
+          btnZone.innerHTML = `<a href="${url}" target="_blank" class="btn">➡ Payer ${p * 5} € sur Stripe</a>`;
+        }
+      }
     });
   </script>
 </body>
