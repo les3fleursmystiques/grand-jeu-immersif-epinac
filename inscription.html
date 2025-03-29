@@ -1,39 +1,68 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Inscription au Grand Jeu MysseaTM</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription MysseaTM</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #promo-code-container {
+      display: none;
+    }
+    #promo-hint:hover + #promo-code-container,
+    #promo-code-container:focus-within {
+      display: block;
+    }
+  </style>
 </head>
+
 <body>
   <div class="header">
-    <img src="images/logo-myssea.png" alt="Logo Myssea" />
+    <img src="images/logo-myssea.png" alt="Logo Myssea">
   </div>
 
   <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
 
+  <div id="telegram-warning">
+    <strong>⚠ IMPORTANT :</strong>
+    <p>Vous devez avoir un <strong>pseudo Telegram</strong> pour jouer.</p>
+    <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram</a></p>
+    <p>🔹 <a href="https://www.google.com/search?q=créer+un+pseudo+Telegram" target="_blank">Créer un pseudo Telegram</a></p>
+  </div>
+
   <form id="registration-form">
     <label for="team-name">Nom de l'équipe :</label>
-    <input type="text" id="team-name" required><br><br>
+    <input type="text" id="team-name" name="team_name" required><br><br>
 
     <label for="telegram-username">Pseudo Telegram :</label>
-    <input type="text" id="telegram-username" required placeholder="ex: @votrePseudo"><br><br>
+    <input type="text" id="telegram-username" name="telegram_username" required placeholder="@votrePseudo"><br><br>
 
     <label for="participants">Nombre de participants :</label>
-    <select id="participants" required>
-      <option value="">-- Sélectionnez --</option>
-      <option value="1">1 joueur</option>
-      <option value="2">2 joueurs</option>
-      <option value="3">3 joueurs</option>
-      <option value="4">4 joueurs</option>
-      <option value="5">5 joueurs</option>
-    </select><br><br>
+    <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-    <button type="button" id="pay-btn" disabled>⛔ Veuillez remplir tous les champs</button>
+    <span id="promo-hint" style="font-size: small; cursor: pointer;">(Ajouter un code promo)</span>
+    <div id="promo-code-container">
+      <label for="promo-code">Code promo :</label>
+      <input type="text" id="promo-code" name="promo_code" placeholder="Ex: MYSSEPA1">
+      <p id="promo-warning" style="color: red; display: none;"></p>
+    </div>
+
+    <div id="buttons-container" style="margin-top: 20px;">
+      <button type="button" id="pay-btn" disabled style="background-color: grey; cursor: not-allowed;">
+        ⛔ Veuillez remplir tous les champs ci-dessus
+      </button>
+    </div>
   </form>
 
   <script>
+    const validPromoCodes = {
+      "MYSSEPA1": 1,
+      "MYSSEPA2": 2,
+      "MYSSEPRO": 5,
+      "MYSSEADMINITY": Infinity
+    };
+
+    
     const stripeLinks = {
       1: "https://buy.stripe.com/5kAaGxd6X8ZY6mQ004", // <--- remplace ici
       2: "https://buy.stripe.com/fZe15X5Eva427qU6or", // <--- remplace ici
@@ -42,34 +71,69 @@
       5: "https://buy.stripe.com/8wMcOF2sj6RQ8uYaEE"  // <--- remplace ici
     };
 
-    document.getElementById("registration-form").addEventListener("input", function () {
-      const name = document.getElementById("team-name").value.trim();
-      const username = document.getElementById("telegram-username").value.trim();
-      const count = document.getElementById("participants").value;
+    document.addEventListener("DOMContentLoaded", function () {
+      const telegramInput = document.getElementById("telegram-username");
+      const teamInput = document.getElementById("team-name");
+      const participantsInput = document.getElementById("participants");
+      const promoInput = document.getElementById("promo-code");
       const payBtn = document.getElementById("pay-btn");
+      const warningText = document.getElementById("promo-warning");
 
-      if (name && username && count) {
-        payBtn.disabled = false;
-        payBtn.style.backgroundColor = "#4CAF50";
-        payBtn.style.cursor = "pointer";
-        payBtn.innerText = `➡ Payer pour ${count} joueur(s)`;
+      telegramInput.addEventListener("blur", function () {
+        if (!telegramInput.value.startsWith("@")) {
+          telegramInput.value = "@" + telegramInput.value;
+        }
+      });
 
-        payBtn.onclick = () => {
-          window.open(stripeLinks[count], "_blank");
-        };
-      } else {
+      document.getElementById("registration-form").addEventListener("input", function () {
+        const username = telegramInput.value.trim();
+        const team = teamInput.value.trim();
+        const count = parseInt(participantsInput.value) || 0;
+        const code = promoInput.value.trim().toUpperCase();
+
+        const isFilled = username && team && count > 0;
+
+        if (!isFilled) {
+          disablePayBtn("⛔ Veuillez remplir tous les champs");
+          return;
+        }
+
+        if (code in validPromoCodes) {
+          const max = validPromoCodes[code];
+          if (count <= max) {
+            warningText.style.display = "none";
+            enablePayBtn("✅ Code promo accepté — accès autorisé", "acces-reel.html");
+          } else {
+            warningText.innerText = `⚠ Le code "${code}" est limité à ${max} joueur(s).`;
+            warningText.style.display = "block";
+            enablePayBtn("➡ Payer la différence", stripeLinks[count]);
+          }
+        } else if (code === "") {
+          warningText.style.display = "none";
+          enablePayBtn("➡ Paiement en ligne", stripeLinks[count]);
+        } else {
+          warningText.innerText = `⚠ Code promo non reconnu.`;
+          warningText.style.display = "block";
+          disablePayBtn("⛔ Inscription bloquée");
+        }
+      });
+
+      function disablePayBtn(label) {
+        payBtn.innerText = label;
         payBtn.disabled = true;
         payBtn.style.backgroundColor = "grey";
         payBtn.style.cursor = "not-allowed";
-        payBtn.innerText = "⛔ Veuillez remplir tous les champs";
         payBtn.onclick = null;
       }
-    });
 
-    document.getElementById("telegram-username").addEventListener("blur", function () {
-      const input = this;
-      if (!input.value.startsWith("@")) {
-        input.value = "@" + input.value;
+      function enablePayBtn(label, link) {
+        payBtn.innerText = label;
+        payBtn.disabled = false;
+        payBtn.style.backgroundColor = "#4CAF50";
+        payBtn.style.cursor = "pointer";
+        payBtn.onclick = function () {
+          window.open(link, "_blank");
+        };
       }
     });
   </script>
