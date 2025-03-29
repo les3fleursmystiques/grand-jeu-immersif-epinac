@@ -5,15 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inscription MysseaTM</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    #promo-code-container {
-      display: none;
-    }
-    #promo-hint:hover + #promo-code-container,
-    #promo-code-container:focus-within {
-      display: block;
-    }
-  </style>
 </head>
 
 <body>
@@ -40,7 +31,6 @@
     <label for="participants">Nombre de participants :</label>
     <input type="number" id="participants" name="participants" min="1" required><br><br>
 
-    <span id="promo-hint" style="font-size: small; cursor: pointer;">(Ajouter un code promo)</span>
     <div id="promo-code-container">
       <label for="promo-code">Code promo :</label>
       <input type="text" id="promo-code" name="promo_code" placeholder="Ex: MYSSEPA1">
@@ -62,7 +52,6 @@
       "MYSSEADMINITY": Infinity
     };
 
-    
     const stripeLinks = {
       1: "https://buy.stripe.com/5kAaGxd6X8ZY6mQ004", // <--- remplace ici
       2: "https://buy.stripe.com/fZe15X5Eva427qU6or", // <--- remplace ici
@@ -139,3 +128,4 @@
   </script>
 </body>
 </html>
+
