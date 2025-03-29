@@ -1,132 +1,80 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription au Grand Jeu Immersif</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription au Grand Jeu Immersif</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="header">
-        <img src="images/logo-myssea.png" alt="Logo Myssea">
+  <div class="header">
+    <img src="images/logo-myssea.png" alt="Logo Myssea">
+  </div>
+
+  <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
+
+  <div id="telegram-warning">
+    <strong>⚠ IMPORTANT :</strong>
+    <p>Vous devez avoir un <strong>pseudo Telegram</strong> et avoir contacté notre bot.</p>
+    <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram</a></p>
+    <p>🔹 <a href="https://www.google.com/search?q=créer+un+pseudo+Telegram" target="_blank">Comment créer un pseudo Telegram ?</a></p>
+  </div>
+
+  <form id="registration-form">
+    <label for="team-name">Nom de l'équipe :</label>
+    <input type="text" id="team-name" name="team_name" required><br><br>
+
+    <label for="telegram-username">Nom d'utilisateur Telegram :</label>
+    <input type="text" id="telegram-username" name="telegram_username" required placeholder="Ex: @monpseudo"><br><br>
+    <p style="color: red;"><strong>⚠ Entrez correctement votre identifiant Telegram (ex: @votrePseudo)</strong></p>
+
+    <label for="participants">Nombre de participants :</label>
+    <select id="participants" name="participants" required>
+      <option value="">-- Sélectionnez --</option>
+      <option value="1">1 joueur</option>
+      <option value="2">2 joueurs</option>
+      <option value="3">3 joueurs</option>
+      <option value="4">4 joueurs</option>
+      <option value="5">5 joueurs</option>
+      <option value="6">6 joueurs</option>
+    </select><br><br>
+
+    <div id="stripe-buttons" style="display: none;">
+      <p><strong>Tarif :</strong> <span id="tarif-text"></span></p>
+      <button type="button" id="stripe-btn" class="btn">➡ Payer par carte bancaire</button>
     </div>
+  </form>
 
-    <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
+  <script>
+    const participantLinks = {
+      1: { price: "5 €", link: "https://buy.stripe.com/test_5euros" },
+      2: { price: "10 €", link: "https://buy.stripe.com/test_10euros" },
+      3: { price: "15 €", link: "https://buy.stripe.com/test_15euros" },
+      4: { price: "20 €", link: "https://buy.stripe.com/test_20euros" },
+      5: { price: "25 €", link: "https://buy.stripe.com/test_25euros" },
+      6: { price: "30 €", link: "https://buy.stripe.com/test_30euros" }
+    };
 
-    <div id="telegram-warning">
-        <strong>⚠ IMPORTANT :</strong>
-        <p>Vous devez avoir un <strong>pseudo Telegram</strong> et avoir contacté notre bot.</p>
-        <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram</a></p>
-        <p>🔹 <a href="https://www.google.com/search?q=créer+un+pseudo+Telegram" target="_blank">Comment créer un pseudo Telegram ?</a></p>
-    </div>
+    document.addEventListener("DOMContentLoaded", function () {
+      const participantsSelect = document.getElementById("participants");
+      const stripeButtons = document.getElementById("stripe-buttons");
+      const tarifText = document.getElementById("tarif-text");
+      const stripeBtn = document.getElementById("stripe-btn");
 
-    <form id="registration-form">
-        <label for="team-name">Nom de l'équipe :</label>
-        <input type="text" id="team-name" name="team_name" required><br><br>
-
-        <label for="telegram-username">Nom d'utilisateur Telegram :</label>
-        <input type="text" id="telegram-username" name="telegram_username" required placeholder="Ex: @monpseudo"><br><br>
-        <p style="color: red;"><strong>⚠ Entrez correctement votre identifiant Telegram (ex: @votrePseudo)</strong></p>
-
-        <label for="participants">Nombre de participants :</label>
-        <input type="number" id="participants" name="participants" min="1" required><br><br>
-
-        <label for="promo-code">Code promo (facultatif) :</label>
-        <input type="text" id="promo-code" name="promo_code" placeholder="Ex: MYSSEPA2"><br><br>
-
-        <p id="promo-warning" style="color: red; display: none;"></p>
-
-        <button type="submit" id="pay-btn" style="background-color: #4CAF50; cursor: pointer;">
- 		 ✅ Valider et accéder au jeu
-	</button>
-    </form>
-
-    <script>
-        const validPromoCodes = {
-            "MYSSEPA1": 1,
-            "MYSSEPA2": 2,
-            "MYSSEPRO": 5,
-            "MYSSEADMINITY": Infinity
-        };
-
-        const paypalLink = "https://paypal.me/LaurieBlanot?country.x=FR&locale.x=fr_FR";
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const telegramInput = document.getElementById("telegram-username");
-            const teamInput = document.getElementById("team-name");
-            const participantsInput = document.getElementById("participants");
-            const promoInput = document.getElementById("promo-code");
-            const payBtn = document.getElementById("pay-btn");
-            const warningText = document.getElementById("promo-warning");
-
-            telegramInput.addEventListener("blur", function () {
-                if (!telegramInput.value.startsWith("@")) {
-                    telegramInput.value = "@" + telegramInput.value;
-                }
-            });
-
-            document.getElementById("registration-form").addEventListener("input", function () {
-                const username = telegramInput.value.trim();
-                const team = teamInput.value.trim();
-                const count = parseInt(participantsInput.value) || 0;
-                const code = promoInput.value.trim().toUpperCase();
-                const isFilled = username && team && count > 0;
-
-                if (!isFilled) {
-                    disablePayBtn("⛔ Inscription temporairement fermée ⛔");
-                    return;
-                }
-
-                // Cas spécial : accès admin (accès-reel.html)
-                if (code === "MYSSEADMINITY") {
-                    window.location.href = "acces-reel.html";
-                    return;
-                }
-
-                // Codes promo classiques
-                if (code in validPromoCodes) {
-                    const maxAllowed = validPromoCodes[code];
-                    if (count <= maxAllowed) {
-                        warningText.style.display = "none";
-                        enablePayBtn("✅ Code promo accepté — inscription gratuite", "acces.html");
-                    } else {
-                        warningText.innerText = `⚠ Le code "${code}" est limité à ${maxAllowed} participant(s). Veuillez régler la différence.`;
-                        warningText.style.display = "block";
-                        enablePayBtn("➡ Payer la différence sur PayPal", paypalLink);
-                    }
-                } else if (code === "") {
-                    warningText.style.display = "none";
-                    enablePayBtn("➡ Payer sur PayPal", paypalLink);
-                } else {
-                    warningText.innerText = `⚠ Code promo non reconnu.`;
-                    warningText.style.display = "block";
-                    disablePayBtn("⛔ Inscription temporairement fermée ⛔");
-                }
-            });
-
-            function disablePayBtn(label) {
-                payBtn.innerText = label;
-                payBtn.disabled = true;
-                payBtn.style.backgroundColor = "grey";
-                payBtn.style.cursor = "not-allowed";
-                payBtn.onclick = null;
-            }
-
-            function enablePayBtn(label, link) {
-                payBtn.innerText = label;
-                payBtn.disabled = false;
-                payBtn.style.backgroundColor = "#4CAF50";
-                payBtn.style.cursor = "pointer";
-                payBtn.onclick = function () {
-                    if (link) {
-                        window.open(link, "_blank");
-                    } else {
-                        alert("Inscription validée !");
-                    }
-                };
-            }
-        });
-    </script>
+      participantsSelect.addEventListener("change", function () {
+        const count = parseInt(this.value);
+        if (participantLinks[count]) {
+          tarifText.textContent = participantLinks[count].price;
+          stripeButtons.style.display = "block";
+          stripeBtn.onclick = () => {
+            window.location.href = participantLinks[count].link;
+          };
+        } else {
+          stripeButtons.style.display = "none";
+        }
+      });
+    });
+  </script>
 </body>
 </html>
