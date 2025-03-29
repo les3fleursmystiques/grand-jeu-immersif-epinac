@@ -39,8 +39,9 @@
       <option value="5">5 joueurs</option>
     </select><br><br>
 
-    <!-- Code promo discret -->
-    <input type="text" id="promo-code" name="promo_code" placeholder="Code promo (facultatif)" style="display: none;"><br>
+    <!-- Champ code promo discret -->
+    <label for="promo-code" style="font-weight: normal; color: #555; font-size: 0.9em;">Code promo (facultatif) :</label>
+    <input type="text" id="promo-code" name="promo_code" placeholder="Code promo (facultatif)" style="opacity: 0.8;"><br>
 
     <p id="promo-warning" style="color: red; display: none;"></p>
 
@@ -74,14 +75,6 @@
       const tarifText = document.getElementById("tarif-text");
       const paymentBtn = document.getElementById("payment-btn");
       const paymentSection = document.getElementById("payment-section");
-
-      // Active champ promo caché avec raccourci clavier (ex: shift + P)
-      document.addEventListener("keydown", function (e) {
-        if (e.shiftKey && e.key === "P") {
-          promoInput.style.display = "block";
-          promoInput.focus();
-        }
-      });
 
       form.addEventListener("input", () => {
         const count = parseInt(participants.value);
