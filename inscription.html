@@ -39,37 +39,86 @@
       <option value="5">5 joueurs</option>
     </select><br><br>
 
-    <div id="stripe-buttons" style="display: none;">
+    <!-- Code promo discret -->
+    <input type="text" id="promo-code" name="promo_code" placeholder="Code promo (facultatif)" style="display: none;"><br>
+
+    <p id="promo-warning" style="color: red; display: none;"></p>
+
+    <div id="payment-section" style="display: none;">
       <p><strong>Tarif :</strong> <span id="tarif-text"></span></p>
-      <button type="button" id="stripe-btn" class="btn">➡ Payer par carte bancaire</button>
+      <button type="button" id="payment-btn" class="btn">➡ Payer par carte bancaire</button>
     </div>
   </form>
 
   <script>
-    const participantLinks = {
-      1: { price: "5 €", link: "https://buy.stripe.com/test_eVa29Ag6I69S3oAbII" },
-      2: { price: "10 €", link: "https://buy.stripe.com/test_9AQ5lM1bO69S2kw289" },
-      3: { price: "15 €", link: "https://buy.stripe.com/test_bIY4hIg6IbucbV64gi" },
-      4: { price: "20 €", link: "https://buy.stripe.com/test_28oeWm4o09m42kwbIL" },
-      5: { price: "25 €", link: "https://buy.stripe.com/test_7sI3dEg6I41K6AM9AE" }
+    const validPromoCodes = {
+      "MYSSEPA1": 1,
+      "MYSSEPA2": 2,
+      "MYSSEPRO": 5,
+      "MYSSEADMINITY": Infinity
+    };
+
+    const stripeLinks = {
+      1: "https://buy.stripe.com/test_eVa29Ag6I69S3oAbII",
+      2: "https://buy.stripe.com/test_9AQ5lM1bO69S2kw289",
+      3: "https://buy.stripe.com/test_bIY4hIg6IbucbV64gi",
+      4: "https://buy.stripe.com/test_28oeWm4o09m42kwbIL",
+      5: "https://buy.stripe.com/test_7sI3dEg6I41K6AM9AE"
     };
 
     document.addEventListener("DOMContentLoaded", function () {
-      const participantsSelect = document.getElementById("participants");
-      const stripeButtons = document.getElementById("stripe-buttons");
+      const form = document.getElementById("registration-form");
+      const participants = document.getElementById("participants");
+      const promoInput = document.getElementById("promo-code");
+      const warning = document.getElementById("promo-warning");
       const tarifText = document.getElementById("tarif-text");
-      const stripeBtn = document.getElementById("stripe-btn");
+      const paymentBtn = document.getElementById("payment-btn");
+      const paymentSection = document.getElementById("payment-section");
 
-      participantsSelect.addEventListener("change", function () {
-        const count = parseInt(this.value);
-        if (participantLinks[count]) {
-          tarifText.textContent = participantLinks[count].price;
-          stripeButtons.style.display = "block";
-          stripeBtn.onclick = () => {
-            window.location.href = participantLinks[count].link;
-          };
+      // Active champ promo caché avec raccourci clavier (ex: shift + P)
+      document.addEventListener("keydown", function (e) {
+        if (e.shiftKey && e.key === "P") {
+          promoInput.style.display = "block";
+          promoInput.focus();
+        }
+      });
+
+      form.addEventListener("input", () => {
+        const count = parseInt(participants.value);
+        const promo = promoInput.value.trim().toUpperCase();
+        warning.style.display = "none";
+
+        if (!count) {
+          paymentSection.style.display = "none";
+          return;
+        }
+
+        if (promo && promo in validPromoCodes) {
+          const maxAllowed = validPromoCodes[promo];
+          if (count <= maxAllowed) {
+            tarifText.textContent = "Accès gratuit avec code promo";
+            paymentBtn.innerText = "✅ Valider et accéder au jeu";
+            paymentBtn.onclick = () => {
+              alert("Inscription validée avec code promo !");
+              window.location.href = "acces-reel.html";
+            };
+            paymentSection.style.display = "block";
+          } else {
+            warning.innerText = `⚠ Code promo limité à ${maxAllowed} joueur(s).`;
+            warning.style.display = "block";
+            paymentSection.style.display = "none";
+          }
+        } else if (promo && !(promo in validPromoCodes)) {
+          warning.innerText = "⚠ Code promo non reconnu.";
+          warning.style.display = "block";
+          paymentSection.style.display = "none";
         } else {
-          stripeButtons.style.display = "none";
+          tarifText.textContent = stripeLinks[count] ? `${count * 5} €` : "";
+          paymentBtn.innerText = "➡ Payer par carte bancaire";
+          paymentBtn.onclick = () => {
+            window.location.href = stripeLinks[count];
+          };
+          paymentSection.style.display = "block";
         }
       });
     });
