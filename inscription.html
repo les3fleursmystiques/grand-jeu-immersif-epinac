@@ -9,7 +9,7 @@
 
 <body>
   <div class="header">
-    <img src="images/logo-myssea.png" alt="Logo Myssea">
+    <img src="images/logo-myssea.jpg" alt="Logo Myssea">
   </div>
 
   <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
@@ -28,9 +28,6 @@
     <label for="telegram-username">Pseudo Telegram :</label>
     <input type="text" id="telegram-username" name="telegram_username" required placeholder="@votrePseudo"><br><br>
 
-    <label for="participants">Nombre de participants :</label>
-    <input type="number" id="participants" name="participants" min="1" required><br><br>
-
     <div id="promo-code-container">
       <label for="promo-code">Code promo :</label>
       <input type="text" id="promo-code" name="promo_code" placeholder="Ex: GTJ56-2HU">
@@ -44,27 +41,32 @@
     </div>
   </form>
 
+  <hr style="margin: 40px 0;">
+
+  <div id="don-section">
+    <h2>Juste envie de nous soutenir ?</h2>
+    <p>Vous pouvez faire un don libre au projet MysseaTM, même sans inscription au jeu :</p>
+    <a href="don.html">
+      <button style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">
+        Faire un don libre
+      </button>
+    </a>
+  </div>
+
   <script>
     const validPromoCodes = {
-      "MYS-EP-J": 1,
-      "MYS-EP-2II": 2,
-      "MYS-EPRO": 5,
-      "MYS/OT/OFFERT": 5,
-      "MYSSE-ADMIN-ITY": Infinity
+      "MYS-EP-J": true,
+      "MYS-EP-2II": true,
+      "MYS-EPRO": true,
+      "MYS/OT/OFFERT": true,
+      "MYSSE-ADMIN-ITY": true
     };
 
-    const stripeLinks = {
-      1: "https://buy.stripe.com/5kAaGxd6X8ZY6mQ004", // <--- remplace ici
-      2: "https://buy.stripe.com/fZe15X5Eva427qU6or", // <--- remplace ici
-      3: "https://buy.stripe.com/eVaaGxd6X0tsh1u002", // <--- remplace ici
-      4: "https://buy.stripe.com/28og0Reb1b864eIeUV", // <--- remplace ici
-      5: "https://buy.stripe.com/8wMcOF2sj6RQ8uYaEE"  // <--- remplace ici
-    };
+    const stripeLink = "https://buy.stripe.com/28og0Reb1b864eIeUV";
 
     document.addEventListener("DOMContentLoaded", function () {
       const telegramInput = document.getElementById("telegram-username");
       const teamInput = document.getElementById("team-name");
-      const participantsInput = document.getElementById("participants");
       const promoInput = document.getElementById("promo-code");
       const payBtn = document.getElementById("pay-btn");
       const warningText = document.getElementById("promo-warning");
@@ -78,10 +80,9 @@
       document.getElementById("registration-form").addEventListener("input", function () {
         const username = telegramInput.value.trim();
         const team = teamInput.value.trim();
-        const count = parseInt(participantsInput.value) || 0;
         const code = promoInput.value.trim().toUpperCase();
 
-        const isFilled = username && team && count > 0;
+        const isFilled = username && team;
 
         if (!isFilled) {
           disablePayBtn("⛔ Veuillez remplir tous les champs");
@@ -89,18 +90,11 @@
         }
 
         if (code in validPromoCodes) {
-          const max = validPromoCodes[code];
-          if (count <= max) {
-            warningText.style.display = "none";
-            enablePayBtn("✅ Code promo accepté — accès autorisé", "acces-reel.html");
-          } else {
-            warningText.innerText = `⚠ Le code "${code}" est limité à ${max} joueur(s).`;
-            warningText.style.display = "block";
-            enablePayBtn("➡ Payer la différence", stripeLinks[count]);
-          }
+          warningText.style.display = "none";
+          enablePayBtn("✅ Code promo accepté — accès autorisé", "acces-reel.html");
         } else if (code === "") {
           warningText.style.display = "none";
-          enablePayBtn("➡ Paiement en ligne", stripeLinks[count]);
+          enablePayBtn("➡ Paiement en ligne — 20 €", stripeLink);
         } else {
           warningText.innerText = `⚠ Code promo non reconnu.`;
           warningText.style.display = "block";
@@ -129,4 +123,3 @@
   </script>
 </body>
 </html>
-
