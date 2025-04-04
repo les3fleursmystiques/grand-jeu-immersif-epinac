@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Écrire à Maïélo – MysseaTM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="header">
+    <img src="images/logo-myssea.jpg" alt="Logo Myssea">
+  </div>
+
+  <h1>Une boîte aux lettres pour Maïélo</h1>
+
+  <p>
+    Vous voulez partager un ressenti, une idée, ou poser une question ? Ce formulaire est là pour ça.
+    <br><br>
+    Si vous souhaitez recevoir une réponse, vous devez indiquer votre adresse mail.
+  </p>
+
+  <form action="https://formspree.io/f/mrbpyrba" method="POST">
+    <label for="message">Votre message :</label><br>
+    <textarea name="message" rows="6" cols="40" placeholder="Écrivez ici..." required></textarea><br><br>
+
+    <label for="email">Votre adresse mail (facultatif) :</label><br>
+    <input type="email" name="email" placeholder="exemple@email.com"><br><br>
+
+    <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">
+      Envoyer à Maïélo
+    </button>
+  </form>
+
+  <p style="margin-top: 40px; font-style: italic;">
+    Merci pour votre message, 
+    <br>— Maïélo & l’équipe MysseaTM
+  </p>
+</body>
+</html>
