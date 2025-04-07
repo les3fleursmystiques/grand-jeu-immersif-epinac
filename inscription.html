@@ -18,7 +18,6 @@
     <strong>⚠ IMPORTANT :</strong>
     <p>Vous devez avoir un <strong>pseudo Telegram</strong> pour jouer.</p>
     <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram</a></p>
-    <p>🔹 <a href="https://www.google.com/search?q=créer+un+pseudo+Telegram" target="_blank">Créer un pseudo Telegram</a></p>
   </div>
 
   <form id="registration-form">
@@ -53,7 +52,8 @@
     </a>
   </div>
 
-  <footer style="margin-top: 60px; text-align: center;">
+  <footer style="margin-top: 60px; text-align: center; font-size: 14px; color: #777;">
+    <p>Myssea™ — Équipe JD3F & Maïélo pour vous divertir.</p>
     <a href="contact.html">Nous contacter</a>
   </footer>
 
@@ -119,8 +119,32 @@
         payBtn.disabled = false;
         payBtn.style.backgroundColor = "#4CAF50";
         payBtn.style.cursor = "pointer";
+
         payBtn.onclick = function () {
           window.open(link, "_blank");
+
+          const pseudo = telegramInput.value.trim().replace("@", "");
+          const langue = "FR";
+
+          const apiUrl = "https://script.google.com/macros/s/AKfycbzQ81ftdpyg0sQ7cZib8acK0Ut0glNhLfnUwTaY7KfANkMC0bCdZOnLPAK0NwsoU3VsqA/exec";
+          const fullUrl = `${apiUrl}?pseudo=${encodeURIComponent(pseudo)}&langue=${encodeURIComponent(langue)}`;
+
+          fetch(fullUrl)
+            .then(response => response.text())
+            .then(code => {
+              if (code.startsWith("MYS")) {
+                const botUrl = `https://t.me/mysseatest_bot?start=${code}`;
+                alert(`Ton code est : ${code}
+Clique OK pour rejoindre le bot.`);
+                window.location.href = botUrl;
+              } else {
+                alert("Erreur : " + code);
+              }
+            })
+            .catch(err => {
+              alert("Erreur lors de l’attribution du code. Réessaie plus tard.");
+              console.error(err);
+            });
         };
       }
     });
