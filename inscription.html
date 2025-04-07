@@ -95,7 +95,7 @@
 
         if (code in validPromoCodes) {
           warningText.style.display = "none";
-          enablePayBtn("✅ Code promo accepté — accès autorisé", "acces-reel.html");
+          enablePayBtn("✅ Code promo accepté — accès direct", null, true);
         } else if (code === "") {
           warningText.style.display = "none";
           enablePayBtn("➡ Paiement en ligne — 20 €", stripeLink);
@@ -114,14 +114,40 @@
         payBtn.onclick = null;
       }
 
-      function enablePayBtn(label, link) {
+      function enablePayBtn(label, link, isPromo = false) {
         payBtn.innerText = label;
         payBtn.disabled = false;
         payBtn.style.backgroundColor = "#4CAF50";
         payBtn.style.cursor = "pointer";
 
         payBtn.onclick = function () {
-          window.open(link, "_blank");
+    if (link) {
+      window.open(link, "_blank");
+    }
+
+    const pseudo = telegramInput.value.trim().replace("@", "");
+    const langue = "FR";
+    const apiUrl = "https://script.google.com/macros/s/AKfycbzQ81ftdpyg0sQ7cZib8acK0Ut0glNhLfnUwTaY7KfANkMC0bCdZOnLPAK0NwsoU3VsqA/exec";
+    const fullUrl = `${apiUrl}?pseudo=${encodeURIComponent(pseudo)}&langue=${encodeURIComponent(langue)}`;
+
+    // Si c'est un code promo ou si le paiement vient de s’ouvrir
+    if (isPromo || !link) {
+      fetch(fullUrl)
+        .then(response => response.text())
+        .then(code => {
+          if (code.startsWith("MYS")) {
+            const botUrl = `https://t.me/mysseatest_bot?start=${code}`;
+            alert(`Ton code est : ${code}\nClique OK pour rejoindre le bot.`);
+            window.location.href = botUrl;
+          } else {
+            alert("Erreur : " + code);
+          }
+        })
+        .catch(err => {
+          alert("Erreur lors de l’attribution du code. Réessaie plus tard.");
+          console.error(err);
+        });
+    }
 
           const pseudo = telegramInput.value.trim().replace("@", "");
           const langue = "FR";
