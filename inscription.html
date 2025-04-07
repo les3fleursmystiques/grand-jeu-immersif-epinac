@@ -115,86 +115,56 @@
       }
 
       function enablePayBtn(label, link, isPromo = false) {
-  payBtn.innerText = label;
-  payBtn.disabled = false;
-  payBtn.style.backgroundColor = "#4CAF50";
-  payBtn.style.cursor = "pointer";
-
-  payBtn.onclick = function () {
-    const pseudo = telegramInput.value.trim().replace("@", "");
-    const langue = "FR";
-    const apiUrl = "https://script.google.com/macros/s/AKfycbzQ81ftdpyg0sQ7cZib8acK0Ut0glNhLfnUwTaY7KfANkMC0bCdZOnLPAK0NwsoU3VsqA/exec";
-    const fullUrl = `${apiUrl}?pseudo=${encodeURIComponent(pseudo)}&langue=${encodeURIComponent(langue)}`;
-
-    if (isPromo) {
-      fetch(fullUrl)
-        .then(response => response.text())
-        .then(code => {
-          if (code.startsWith("MYS")) {
-            const botUrl = `https://t.me/mysseatest_bot?start=${code}`;
-            alert(`Ton code est : ${code}\nClique OK pour rejoindre le bot.`);
-            window.location.href = botUrl;
-          } else {
-            alert("Erreur : " + code);
-          }
-        })
-        .catch(err => {
-          alert("Erreur lors de l’attribution du code. Réessaie plus tard.");
-          console.error(err);
-        });
-    } else {
-      window.open(link, "_blank");
-
-      setTimeout(() => {
-        fetch(fullUrl)
-          .then(response => response.text())
-          .then(code => {
-            if (code.startsWith("MYS")) {
-              const botUrl = `https://t.me/mysseatest_bot?start=${code}`;
-              alert(`Ton code est : ${code}\nClique OK pour rejoindre le bot.`);
-              window.location.href = botUrl;
-            } else {
-              alert("Erreur : " + code);
-            }
-          })
-          .catch(err => {
-            alert("Erreur lors de l’attribution du code. Réessaie plus tard.");
-            console.error(err);
-          });
-      }, 4000);
-    }
-  };
-}
         payBtn.innerText = label;
         payBtn.disabled = false;
         payBtn.style.backgroundColor = "#4CAF50";
         payBtn.style.cursor = "pointer";
 
         payBtn.onclick = function () {
-          window.open(link, "_blank");
-
           const pseudo = telegramInput.value.trim().replace("@", "");
           const langue = "FR";
-
           const apiUrl = "https://script.google.com/macros/s/AKfycbzQ81ftdpyg0sQ7cZib8acK0Ut0glNhLfnUwTaY7KfANkMC0bCdZOnLPAK0NwsoU3VsqA/exec";
           const fullUrl = `${apiUrl}?pseudo=${encodeURIComponent(pseudo)}&langue=${encodeURIComponent(langue)}`;
 
-          fetch(fullUrl)
-            .then(response => response.text())
-            .then(code => {
-              if (code.startsWith("MYS")) {
-                const botUrl = `https://t.me/mysseatest_bot?start=${code}`;
-                alert(`Ton code est : ${code}
+          if (isPromo) {
+            fetch(fullUrl)
+              .then(response => response.text())
+              .then(code => {
+                if (code.startsWith("MYS")) {
+                  const botUrl = `https://t.me/mysseatest_bot?start=${code}`;
+                  alert(`Ton code est : ${code}
 Clique OK pour rejoindre le bot.`);
-                window.location.href = botUrl;
-              } else {
-                alert("Erreur : " + code);
-              }
-            })
-            .catch(err => {
-              alert("Erreur lors de l’attribution du code. Réessaie plus tard.");
-              console.error(err);
-            });
+                  window.location.href = botUrl;
+                } else {
+                  alert("Erreur : " + code);
+                }
+              })
+              .catch(err => {
+                alert("Erreur lors de l’attribution du code. Réessaie plus tard.");
+                console.error(err);
+              });
+          } else {
+            window.open(link, "_blank");
+
+            setTimeout(() => {
+              fetch(fullUrl)
+                .then(response => response.text())
+                .then(code => {
+                  if (code.startsWith("MYS")) {
+                    const botUrl = `https://t.me/mysseatest_bot?start=${code}`;
+                    alert(`Ton code est : ${code}
+Clique OK pour rejoindre le bot.`);
+                    window.location.href = botUrl;
+                  } else {
+                    alert("Erreur : " + code);
+                  }
+                })
+                .catch(err => {
+                  alert("Erreur lors de l’attribution du code. Réessaie plus tard.");
+                  console.error(err);
+                });
+            }, 4000);
+          }
         };
       }
     });
