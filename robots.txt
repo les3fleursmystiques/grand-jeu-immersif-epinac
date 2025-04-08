@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://myssea-jeux-culturels-et-touristiques.netlify.app/sitemap.xml
