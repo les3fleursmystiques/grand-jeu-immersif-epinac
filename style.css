@@ -40,18 +40,10 @@ nav a:hover {
 /* Boutons */
 .button, button {
     display: inline-block;
-    background-color: #6A0DAD;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
+    background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;
 }
 .button:hover, button:hover {
-    background-color: #540888;
+    background-color: #4CAF50;
 }
 
 /* Formulaires */
