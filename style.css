@@ -1,6 +1,7 @@
+
 /* Fond général */
 body {
-    background-color: #fdfaf5; /* Fond crème doux */
+    background-color: #fdfaf5;
     background-image: url("images/fond-aventure.png");
     background-repeat: repeat;
     background-size: 300px;
@@ -9,6 +10,18 @@ body {
     margin: 0;
     padding: 40px 20px;
     text-align: center;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* Zone centrale avec fond blanc doux */
+.main-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 /* En-tête et logo */
@@ -25,6 +38,8 @@ body {
 
 /* Titres */
 h1, h2 {
+    font-weight: 700;
+    font-size: 28px;
     color: #2e3b2e;
     margin-bottom: 20px;
     font-family: 'Georgia', serif;
@@ -33,7 +48,7 @@ h1, h2 {
 /* Navigation */
 nav a {
     margin: 0 10px;
-    color: #387d54; /* Vert profond */
+    color: #387d54;
     text-decoration: none;
     font-weight: bold;
 }
