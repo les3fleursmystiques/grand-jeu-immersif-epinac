@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,12 +12,13 @@
 </head>
 
 <body>
-<div class="main-container">
   <div class="header">
     <div class="logo-home">
       <img src="images/logo-myssea.png" alt="Logo MysseaTM">
     </div>
   </div>
+
+  <div class="main-container">
     <h1>Inscription au Grand Jeu de Piste à Épinac</h1>
 
     <div id="telegram-warning">
@@ -32,12 +34,21 @@
       <label for="team-name">Nom d'équipe (ou prénom) :</label>
       <input type="text" id="team-name" name="team_name" required>
 
-      <button class="button" type="button" onclick="startPayment()">Payez 20€ et recevez un code</button>
+      <button class="button" type="button" onclick="startPayment()">Payer et recevoir un code</button>
     </form>
 
     <div id="verification-section" style="display:none;">
       <p>Un instant… nous contactons notre carnet magique.</p>
     </div>
+
+    <footer style="text-align: center; margin-top: 50px;">
+      <p style="font-style: italic;">Myssea™ — Équipe JD3F & Maïélo pour vous divertir</p>
+      <p>
+        <a href="don.html">Faire un don</a> | 
+        <a href="contact.html">Nous contacter</a>
+      </p>
+    </footer>
+  </div>
 
   <script>
     function startPayment() {
@@ -48,20 +59,11 @@
         return;
       }
 
-     <footer style="text-align: center; margin-top: 50px;">
-       <p style="font-style: italic;">Myssea™ — Équipe JD3F & Maïélo pour vous divertir</p>
-       <p>
-         <a href="don.html">Faire un don</a> | 
-         <a href="contact.html">Nous contacter</a>
-       </p>
-     </footer>
-
-      // Exemple de lien Stripe
       const stripeURL = "https://buy.stripe.com/28og0Reb1b864eIeUV";
       document.getElementById("verification-section").style.display = "block";
       window.open(stripeURL, "_blank");
- </div>
-      // Après paiement, logique d’appel Google Apps Script à réinsérer ici
+
+      // Appel au script Google Sheets à réintégrer ici
     }
   </script>
 </body>
