@@ -1,21 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscription au jeu Myssea™ à Épinac</title>
-  <meta name="description" content="Inscrivez-vous au jeu Myssea™ à Épinac. Un jeu de piste culturel pour toute la famille, à vivre sur le terrain avec Telegram.">
-  <meta name="keywords" content="inscription jeu Myssea, Épinac, jeu culturel, jeu de piste, aventure en famille, Telegram">
+  <title>Inscription au jeu Myssea™</title>
+  <meta name="description" content="Inscrivez-vous au jeu Myssea™ à Épinac. Paiement sécurisé, code unique et accès immédiat au bot Telegram.">
+  <meta name="keywords" content="Myssea, inscription, jeu de piste, code, Telegram, Épinac, jeu culturel">
   <meta name="author" content="JD3F, Laurie et l'équipage MysseaTM">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div class="main-container">
-    <img src="images/logo-myssea.png" alt="Logo MysseaTM">
+  <div class="header">
+    <div class="logo-home">
+      <img src="images/logo-myssea.png" alt="Logo MysseaTM">
+    </div>
+  </div>
 
-    <h1>Inscription au Grand Jeu Immersif à Épinac</h1>
+  <div class="main-container">
+    <h1>Inscription au Grand Jeu de Piste à Épinac</h1>
 
     <div id="telegram-warning">
       <strong>⚠ IMPORTANT :</strong>
@@ -23,16 +26,45 @@
       <p>📲 <a href="https://telegram.org" target="_blank">Téléchargez Telegram</a></p>
     </div>
 
-    <!-- Formulaire -->
-    <!-- Formulaire conservé tel quel (logique de script intacte) -->
+    <form id="registration-form">
+      <label for="telegram-username">Votre pseudo Telegram :</label>
+      <input type="text" id="telegram-username" name="telegram_username" placeholder="@VotreNom" required>
+
+      <label for="team-name">Nom d'équipe (ou prénom) :</label>
+      <input type="text" id="team-name" name="team_name" required>
+
+      <button class="button" type="button" onclick="startPayment()">Payer et recevoir un code</button>
+    </form>
+
+    <div id="verification-section" style="display:none;">
+      <p>Un instant… nous contactons notre carnet magique.</p>
+    </div>
   </div>
 
-  <footer style="margin-top: 60px; text-align: center; font-size: 14px; color: #777;">
-    <p>Myssea™ — Écriture vivante par JD3F, Meïlee, Manon-Fleur et Maïélo</p>
-    <a href="contact.html">Nous contacter</a>
+  <footer style="text-align: center; margin-top: 50px;">
+    <p style="font-style: italic;">Myssea™ — Équipe JD3F & Maïélo pour vous divertir</p>
+    <p>
+      <a href="don.html">Faire un don</a> | 
+      <a href="contact.html">Nous contacter</a>
+    </p>
   </footer>
 
-  <!-- Script conservé tel quel (pas modifié ici pour stabilité) -->
+  <script>
+    function startPayment() {
+      const username = document.getElementById("telegram-username").value.trim();
+      const team = document.getElementById("team-name").value.trim();
+      if (!username || !team) {
+        alert("Merci de remplir les deux champs.");
+        return;
+      }
 
+      // Exemple de lien Stripe
+      const stripeURL = "https://buy.stripe.com/28og0Reb1b864eIeUV";
+      document.getElementById("verification-section").style.display = "block";
+      window.open(stripeURL, "_blank");
+
+      // Après paiement, logique d’appel Google Apps Script à réinsérer ici
+    }
+  </script>
 </body>
 </html>
