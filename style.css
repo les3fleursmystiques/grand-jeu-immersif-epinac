@@ -1,10 +1,14 @@
 /* Fond général */
 body {
-    background-color: #D8BFD8; /* Parme doux */
-    font-family: Arial, sans-serif;
-    text-align: center;
+    background-color: #fdfaf5; /* Fond crème doux */
+    background-image: url("images/fond-aventure.png");
+    background-repeat: repeat;
+    background-size: 300px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2e3b2e;
     margin: 0;
     padding: 40px 20px;
+    text-align: center;
 }
 
 /* En-tête et logo */
@@ -13,23 +17,23 @@ body {
     margin-bottom: 20px;
 }
 .header img {
-    max-width: 200px;
+    max-width: 220px;
 }
-
 .logo-home img {
-    max-width: 300px; /* Plus grand sur l'accueil */
+    max-width: 300px;
 }
 
 /* Titres */
 h1, h2 {
-    color: #333;
+    color: #2e3b2e;
     margin-bottom: 20px;
+    font-family: 'Georgia', serif;
 }
 
 /* Navigation */
 nav a {
     margin: 0 10px;
-    color: #6A0DAD;
+    color: #387d54; /* Vert profond */
     text-decoration: none;
     font-weight: bold;
 }
@@ -40,10 +44,16 @@ nav a:hover {
 /* Boutons */
 .button, button {
     display: inline-block;
-    background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
 }
 .button:hover, button:hover {
-    background-color: #4CAF50;
+    background-color: #3e8e41;
 }
 
 /* Formulaires */
@@ -52,7 +62,7 @@ form {
     margin: 0 auto;
     text-align: left;
 }
-form input, form select {
+form input, form select, form textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 15px;
@@ -62,10 +72,11 @@ form input, form select {
 
 /* Messages info/alerte */
 #telegram-warning {
-    background-color: #ffcccb;
+    background-color: #fff1f0;
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 15px;
+    border-left: 4px solid #ff6f61;
 }
 
 #verification-section {
@@ -73,4 +84,5 @@ form input, form select {
     padding: 10px;
     border-radius: 5px;
     margin-top: 15px;
+    border-left: 4px solid #42a5f5;
 }
