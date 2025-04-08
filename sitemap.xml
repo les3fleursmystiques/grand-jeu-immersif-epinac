@@ -11,14 +11,18 @@
   </url>
   <url>
     <loc>https://myssea-jeux-culturels-et-touristiques.netlify.app/inscription.html</loc>
+    <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://myssea-jeux-culturels-et-touristiques.netlify.app/rules.html</loc>
+    <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://myssea-jeux-culturels-et-touristiques.netlify.app/don.html</loc>
+    <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://myssea-jeux-culturels-et-touristiques.netlify.app/contact.html</loc>
+    <changefreq>monthly</changefreq>
   </url>
 </urlset>
