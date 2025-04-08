@@ -1,4 +1,3 @@
-
 /* Fond général */
 body {
     background-color: #fdfaf5;
@@ -101,3 +100,10 @@ form input, form select, form textarea {
     margin-top: 15px;
     border-left: 4px solid #42a5f5;
 }
+
+/* alignement-vers-gauche */
+.align-left {
+    text-align: left
+}
+
+
