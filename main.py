@@ -108,7 +108,7 @@ async def handle_reponse_jeu(update: Update, context: ContextTypes.DEFAULT_TYPE)
     bonne_reponse = question["Réponse attendue"]
     tries = context.user_data.get("tries", 0)
 
-    # Si la réponse est correcte
+ # Si la réponse est correcte
     if user_answer == bonne_reponse:
         context.user_data["current_index"] += 1
         # Fin - Phrase mystère (avant-dernière étape)
@@ -134,11 +134,38 @@ async def handle_reponse_jeu(update: Update, context: ContextTypes.DEFAULT_TYPE)
             await update.message.reply_text(encouragement)
             context.user_data["tries"] = tries + 1
         else:
-            # Si plus d'essais, on donne les indices ou on passe à la question suivante
+            # Si plus d'essais, on donne les indices dans l'ordre
             if indices:
-                # Donne tous les indices restants après 3 essais
-                for i in range(tries - 2, len(indices)):
-                    await update.message.reply_text(f"🔍 Indice : {indices[i]}")
+                if tries == 3:  # Premier indice
+                    indice = indices[0]
+                    await update.message.reply_text(f"🔍 Indice 1 : {indice}")
+                elif tries == 4:  # Deuxième indice
+                    indice = indices[1] if len(indices) > 1 else None
+                    if indice:
+                        await update.message.reply_text(f"🔍 Indice 2 : {indice}")
+                    else:
+                        await update.message.reply_text("❌ Pas d'autres indices disponibles. Vous passez à la ligne suivante.")
+                        context.user_data["current_index"] += 1
+                        await update.message.reply_text(questions[context.user_data["current_index"]]["Message"])
+                        return
+                elif tries == 5:  # Troisième indice
+                    indice = indices[2] if len(indices) > 2 else None
+                    if indice:
+                        await update.message.reply_text(f"🔍 Indice 3 : {indice}")
+                    else:
+                        await update.message.reply_text("❌ Pas d'autres indices disponibles. Vous passez à la ligne suivante.")
+                        context.user_data["current_index"] += 1
+                        await update.message.reply_text(questions[context.user_data["current_index"]]["Message"])
+                        return
+                elif tries == 6:  # Quatrième indice
+                    indice = indices[3] if len(indices) > 3 else None
+                    if indice:
+                        await update.message.reply_text(f"🔍 Indice 4 : {indice}")
+                    else:
+                        await update.message.reply_text("❌ Pas d'autres indices disponibles. Vous passez à la ligne suivante.")
+                        context.user_data["current_index"] += 1
+                        await update.message.reply_text(questions[context.user_data["current_index"]]["Message"])
+                        return
             else:
                 # Si pas d'indices, on passe à la question suivante (sauf pour la phrase mystère)
                 if index == len(questions) - 2:  # Phrase mystère
