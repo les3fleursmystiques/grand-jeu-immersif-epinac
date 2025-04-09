@@ -24,6 +24,21 @@ def normalize_text(text):
     text = text.translate(str.maketrans('', '', string.punctuation)).replace(" ", "")
     return text
 
+# Lecture des données du tableau principal
+raw_data = sheet.get_all_records()
+questions = []
+for row in raw_data:
+  try :
+    questions.append({
+        "Etape": row.get("Etape", ""),
+        "Type": row.get("Type detape", ""),
+        "Message": row.get("Message", ""),
+        "Réponse attendue": normalize_text(row.get("Réponse attendue", "")),
+        "Indices": [row.get(f"Indice {i}", "") for i in range(1, 5) if row.get(f"Indice {i}")]
+    })
+  except Exception as e:
+    print(f"Erreur lors de la lecture de la ligne {row}: {e}")
+
 # Détection de la langue et sélection de la feuille correspondante
 def detect_language(update: Update) -> str:
     lang = update.effective_user.language_code or "fr"
