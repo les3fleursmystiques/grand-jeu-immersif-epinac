@@ -1,4 +1,3 @@
-
 import os
 import json
 import base64
@@ -8,6 +7,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import unicodedata
 import string
+from datetime import datetime
 
 # Connexion sécurisée à Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -49,13 +49,27 @@ def get_data(update: Update):
 # Feuille des codes d'accès
 sheet_codes = client.open_by_key("19I69nISBj74wAsVpQO2z2T2hptZ-iJVxQxBTl9DX8hk").worksheet("FeuilleCodes")
 
-# Marquer un code comme utilisé
-def marquer_code_utilise(code):
+# Marquer un code comme utilisé et enregistrer le pseudo et la date
+def marquer_code_utilise(code, pseudo):
     try:
         data = sheet_codes.get_all_records()
         for i, row in enumerate(data, start=2):
             if row["Code"].strip().upper() == code:
+                # Mise à jour du statut et de l'utilisation
+                sheet_codes.update_cell(i, 2, "délivré")  # Colonne B = "Statut"
                 sheet_codes.update_cell(i, 3, "oui")  # Colonne C = "Utilisé"
+
+                # Mise à jour du pseudo
+                sheet_codes.update_cell(i, 4, pseudo)  # Colonne D = "Pseudo"
+
+                # Mise à jour de la date et de l'heure
+                current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Date actuelle
+                sheet_codes.update_cell(i, 5, current_date)  # Colonne E = "Date"
+
+                # Mise à jour de l'heure
+                current_heure = datetime.now().strftime("%H:%M:%S")  # Heure actuelles
+                sheet_codes.update_cell(i, 6, current_heure)  # Colonne F = "Heure"
+
                 return True
     except Exception as e:
         print("[ERREUR marquer_code_utilise]", e)
@@ -66,8 +80,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.args:
         user_code = context.args[0].strip().upper()
     else:
-        await update.message.reply_text("Bienvenue dans MysseaTM !
-Merci d'utiliser le lien fourni après ton inscription.")
+        await update.message.reply_text("Bienvenue dans MysseaTM !\nMerci d'utiliser le lien fourni après ton inscription.")
         return
 
     if not user_code.startswith("MYS-"):
@@ -168,3 +181,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
+
+# Saving the complete Python script
+file_path = '/mnt/data/Updated_Myssea_Bot_Final_Script_with_Logic.py'
+with open(file_path, 'w') as file:
+    file.write(final_script)
+
+file_path
