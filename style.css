@@ -65,9 +65,17 @@ nav a:hover {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 .button:hover, button:hover {
     background-color: #3e8e41;
+    transform: scale(1.05);
+}
+
+.button.indisponible {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 /* Formulaires */
