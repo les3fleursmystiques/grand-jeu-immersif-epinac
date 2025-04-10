@@ -65,7 +65,36 @@
       document.getElementById("verification-section").style.display = "block";
       window.open(stripeURL, "_blank");
 
-      // Appel au script Google Sheets à réintégrer ici
+      
+      // Attente avant d'appeler le script Google
+      setTimeout(() => {
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyCiNPrPUrS2LdfYrF0w7GKk-luYeRdBJ.../exec"; // colle ici ton lien complet
+        const apiURL = `${scriptURL}?pseudo=${encodeURIComponent(username)}&equipe=${encodeURIComponent(team)}&langue=FR`;
+
+        fetch(apiURL)
+          .then(response => response.text())
+          .then(code => {
+            if (code.startsWith("Erreur") || code.includes("disponibles")) {
+              alert("Désolé, aucun code n'est disponible pour le moment.");
+              return;
+            }
+
+            document.getElementById("verification-section").innerHTML = `
+              <p>Merci pour votre inscription !</p>
+              <p>Votre code est : <strong>${code}</strong></p>
+              <p>Redirection en cours vers le bot Telegram…</p>
+            `;
+
+            setTimeout(() => {
+              window.location.href = `https://t.me/MysseaBot?start=${code}`;
+            }, 5000);
+          })
+          .catch(error => {
+            console.error("Erreur lors de l'appel au script :", error);
+            alert("Une erreur est survenue. Merci de réessayer plus tard.");
+          });
+      }, 15000);
+
     }
   </script>
 </body>
