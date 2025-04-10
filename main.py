@@ -1,4 +1,3 @@
-
 import os
 import json
 import base64
@@ -138,9 +137,9 @@ async def handle_reponse_jeu(update: Update, context: ContextTypes.DEFAULT_TYPE)
         else:
             # Si plus d'essais, on donne les indices ou on passe à la question suivante
             if indices:
-                # Donne tous les indices restants après 3 essais
-                for i in range(tries - 2, len(indices)):
-                    await update.message.reply_text(f"🔍 Indice : {indices[i]}")
+                # Donne les indices un à un après 3 essais
+                for i in range(tries - 3, len(indices)):
+                    await update.message.reply_text(f"🔍 Indice {i + 1}: {indices[i]}")
             else:
                 # Si pas d'indices, on passe à la question suivante (sauf pour la phrase mystère)
                 if index == len(questions) - 2:  # Phrase mystère
