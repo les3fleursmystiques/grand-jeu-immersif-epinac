@@ -1,3 +1,4 @@
+
 import os
 import json
 import base64
@@ -80,7 +81,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.args:
         user_code = context.args[0].strip().upper()
     else:
-        await update.message.reply_text("Bienvenue dans MysseaTM !\nMerci d'utiliser le lien fourni après ton inscription.")
+        await update.message.reply_text("Bienvenue dans MysseaTM !
+Merci d'utiliser le lien fourni après ton inscription.")
         return
 
     if not user_code.startswith("MYS-"):
@@ -181,11 +183,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-"""
-
-# Saving the complete Python script
-file_path = '/mnt/data/Updated_Myssea_Bot_Final_Script_with_Logic.py'
-with open(file_path, 'w') as file:
-    file.write(final_script)
-
-file_path
