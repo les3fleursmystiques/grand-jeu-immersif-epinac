@@ -34,8 +34,8 @@
       <label for="team-name">Nom d'équipe (ou prénom) :</label>
       <input type="text" id="team-name" name="team_name" required>
 
-      <button class="button indisponible" type="button">Jeu temporairement indisponible</button>
       <!-- <button class="button" type="button" onclick="startPayment()">Payer 20€ et recevoir un code</button> -->
+      <button class="button indisponible" type="button">Jeu temporairement indisponible</button>
     </form>
 
     <div id="verification-section" style="display:none;">
@@ -65,36 +65,31 @@
       document.getElementById("verification-section").style.display = "block";
       window.open(stripeURL, "_blank");
 
-      
-      // Attente avant d'appeler le script Google
+      const stripeURL = "https://buy.stripe.com/28og0Reb1b864eIeUV";
+      document.getElementById("verification-section").style.display = "block";
+      window.open(stripeURL, "_blank");
+
+      // Attente simulée avant appel du script (5 secondes)
       setTimeout(() => {
-        const scriptURL = "https://script.google.com/macros/s/AKfycbyCiNPrPUrS2LdfYrF0w7GKk-luYeRdBJ.../exec"; // colle ici ton lien complet
-        const apiURL = `${scriptURL}?pseudo=${encodeURIComponent(username)}&equipe=${encodeURIComponent(team)}&langue=FR`;
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyCiNPrPUrS2LdfYrF0w7KGk-IuYeRdBJs9VfHtYQ4XDH904j9jVCGqsVpRHwI1LH5yzQ/exec"; // remplace par ton URL réelle
+        const lang = "FR"; // ou autre selon le formulaire
 
-        fetch(apiURL)
-          .then(response => response.text())
-          .then(code => {
-            if (code.startsWith("Erreur") || code.includes("disponibles")) {
-              alert("Désolé, aucun code n'est disponible pour le moment.");
-              return;
+        fetch(`${scriptURL}?pseudo=${encodeURIComponent(username)}&equipe=${encodeURIComponent(team)}&langue=${lang}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.code) {
+              const code = data.code;
+              window.location.href = `https://t.me/myssea_bot?start=${code}`;
+            } else {
+              alert("Une erreur est survenue. Aucun code n’a été attribué.");
+              console.log(data);
             }
-
-            document.getElementById("verification-section").innerHTML = `
-              <p>Merci pour votre inscription !</p>
-              <p>Votre code est : <strong>${code}</strong></p>
-              <p>Redirection en cours vers le bot Telegram…</p>
-            `;
-
-            setTimeout(() => {
-              window.location.href = `https://t.me/MysseaBot?start=${code}`;
-            }, 5000);
           })
           .catch(error => {
-            console.error("Erreur lors de l'appel au script :", error);
-            alert("Une erreur est survenue. Merci de réessayer plus tard.");
+            alert("Erreur lors de l’appel au script.");
+            console.error(error);
           });
-      }, 15000);
-
+      }, 5000);
     }
   </script>
 </body>
