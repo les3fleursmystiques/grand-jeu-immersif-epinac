@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merci pour votre inscription</title>
+  <meta name="description" content="Merci pour votre participation au jeu Myssea™.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f8f8;
+      text-align: center;
+      padding: 40px;
+    }
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .code-box {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #0078AA;
+      margin-top: 20px;
+    }
+    .launch-bot {
+      margin-top: 30px;
+      display: inline-block;
+      background-color: #0078AA;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Merci pour votre inscription à Myssea™</h1>
+    <p>Votre paiement a bien été reçu.</p>
+    <p>Nous contactons notre carnet magique pour vous délivrer un code…</p>
+    <div id="code-section" style="display:none;">
+      <p>Voici votre code :</p>
+      <div class="code-box" id="code-box"></div>
+      <a id="launch-bot" class="launch-bot" href="#">Lancer le jeu dans Telegram</a>
+    </div>
+  </div>
+
+  <script>
+    const pseudo = localStorage.getItem("pseudo") || prompt("Entrez votre pseudo Telegram :");
+    const equipe = localStorage.getItem("equipe") || prompt("Nom d'équipe ou prénom :");
+    const lang = "FR";
+
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyCiNPrPUrS2LdfYrF0w7KGk-IuYeRdBJs9VfHtYQ4XDH904j9jVCGqsVpRHwI1LH5yzQ/exec"; // Remplacer ici
+
+    if (pseudo && equipe) {
+      fetch(`${scriptURL}?pseudo=${encodeURIComponent(pseudo)}&equipe=${encodeURIComponent(equipe)}&langue=${lang}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.code) {
+            const code = data.code;
+            document.getElementById("code-box").textContent = code;
+            document.getElementById("launch-bot").href = `https://t.me/myssea_bot?start=${code}`;
+            document.getElementById("code-section").style.display = "block";
+          } else {
+            alert("Erreur : aucun code attribué.");
+          }
+        })
+        .catch(err => {
+          alert("Erreur lors de l'attribution du code.");
+          console.error(err);
+        });
+    } else {
+      alert("Pseudo ou équipe manquant.");
+    }
+  </script>
+</body>
+</html>
