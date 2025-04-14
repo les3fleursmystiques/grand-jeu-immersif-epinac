@@ -13,11 +13,11 @@
 
 <body>
   <div class="main-container">
-  <div class="header">
-    <div class="logo-home">
-      <img src="images/logo-myssea.png" alt="Logo MysseaTM">
+    <div class="header">
+      <div class="logo-home">
+        <img src="images/logo-myssea.png" alt="Logo MysseaTM">
+      </div>
     </div>
-  </div>
 
     <h1>Inscription au Grand Jeu de Piste à Épinac</h1>
 
@@ -34,7 +34,10 @@
       <label for="team-name">Nom d'équipe (ou prénom) :</label>
       <input type="text" id="team-name" name="team_name" required>
 
-      <button class="button" type="button" onclick="startPayment()">Payer 20€ et recevoir un code</button>
+      <label for="promo-code">Code promo (facultatif) :</label>
+      <input type="text" id="promo-code" name="promo_code" placeholder="MYS-XXXXX">
+
+      <button class="button" type="button" onclick="startPayment()">Valider l'inscription</button>
     </form>
 
     <div id="verification-section" style="display:none;">
@@ -43,11 +46,11 @@
 
     <footer style="text-align: center; margin-top: 50px;">
       <p style="font-style: italic;">Myssea™ — Équipe JD3F & Maïélo pour vous divertir</p>
-     <p style=margin-top: 0;">
-      <a href="don.html">Faire un don</a> | 
-      <a href="contact.html">Nous contacter</a> |
-      <a href="index.html">Accueil</a>
-     </P>
+      <p style="margin-top: 0;">
+        <a href="don.html">Faire un don</a> |
+        <a href="contact.html">Nous contacter</a> |
+        <a href="index.html">Accueil</a>
+      </p>
     </footer>
   </div>
 
@@ -55,33 +58,40 @@
     function startPayment() {
       const username = document.getElementById("telegram-username").value.trim();
       const team = document.getElementById("team-name").value.trim();
+      const promo = document.getElementById("promo-code").value.trim().toUpperCase();
+      const scriptURL = "https://script.google.com/macros/s/AKfycbyCiNPrPUrS2LdfYrF0w7KGk-IuYeRdBJs9VfHtYQ4XDH904j9jVCGqsVpRHwI1LH5yzQ/exec"; // Remplacer par ton URL réelle
+      const lang = "FR";
+
       if (!username || !team) {
-        alert("Merci de remplir les deux champs.");
+        alert("Merci de remplir les champs pseudo et équipe.");
         return;
       }
 
-      const stripeURL = "https://buy.stripe.com/28og0Reb1b864eIeUV";
-      document.getElementById("verification-section").style.display = "block";
-      window.open(stripeURL, "_blank");
+      // Enregistrer les infos dans localStorage
+      localStorage.setItem("pseudo", username);
+      localStorage.setItem("equipe", team);
 
-      const stripeURL = "https://buy.stripe.com/28og0Reb1b864eIeUV";
-      document.getElementById("verification-section").style.display = "block";
-      window.open(stripeURL, "_blank");
-
-      // Après 15 secondes, appeler le script Apps Script :
-      setTimeout(() => {
-        const scriptURL = "https://script.google.com/macros/s/AKfycbyCiNPrPUrS2LdfYrF0w7KGk-IuYeRdBJs9VfHtYQ4XDH904j9jVCGqsVpRHwI1LH5yzQ/exec"; // Remplace par ton URL réelle
-        const lang = "FR";
-        fetch(`${scriptURL}?pseudo=${encodeURIComponent(username)}&equipe=${encodeURIComponent(team)}&langue=${lang}`)
+      if (promo && promo.startsWith("MYS-")) {
+        // Cas : code promo gratuit
+        fetch(`${scriptURL}?code=${promo}&pseudo=${encodeURIComponent(username)}&equipe=${encodeURIComponent(team)}&langue=${lang}`)
           .then(response => response.json())
           .then(data => {
             if (data.code) {
-              const code = data.code;
-              alert("Paiement validé. Voici votre code : " + code);
-              window.location.href = `https://t.me/myssea_bot?start=${code}`;
+              alert("Code promo validé ! Vous allez être redirigé vers Telegram.");
+              window.location.href = `https://t.me/myssea_bot?start=${promo}`;
+            } else {
+              alert("Code promo invalide ou déjà utilisé.");
             }
+          })
+          .catch(err => {
+            alert("Erreur lors de la validation du code promo.");
+            console.error(err);
           });
-      }, 15000);
+      } else {
+        // Cas : paiement classique
+        const stripeURL = "https://buy.stripe.com/28og0Reb1b864eIeUV"; // Ton lien réel Stripe
+        window.location.href = stripeURL;
+      }
     }
   </script>
 </body>
