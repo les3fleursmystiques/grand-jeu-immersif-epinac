@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank you for registering</title>
+  <meta name="description" content="Thank you for joining the Myssea™ adventure.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f8f8;
+      text-align: center;
+      padding: 40px;
+    }
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .code-box {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #0078AA;
+      margin-top: 20px;
+    }
+    .launch-bot {
+      margin-top: 30px;
+      display: inline-block;
+      background-color: #0078AA;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Thank you for joining Myssea™</h1>
+    <p>Your payment has been successfully received.</p>
+    <p>We're checking our magic notebook to deliver your code…</p>
+    <div id="code-section" style="display:none;">
+      <p>Your code is:</p>
+      <div class="code-box" id="code-box"></div>
+      <a id="launch-bot" class="launch-bot" href="#">Start the game on Telegram</a>
+    </div>
+  </div>
+
+  <script>
+    const pseudo = localStorage.getItem("pseudo") || prompt("Enter your Telegram username:");
+    const equipe = localStorage.getItem("equipe") || prompt("Your team name or first name:");
+    const lang = "EN";
+
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwRXqCA-F1sCFyApSWgcs2gzhoKFaEAHdLl-9C_6ev0tTvne6T-vurKwVmqC0D9b3m4bg/exec"; // Replace this
+
+    if (pseudo && equipe) {
+      fetch(`${scriptURL}?pseudo=${encodeURIComponent(pseudo)}&equipe=${encodeURIComponent(equipe)}&langue=${lang}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.code) {
+            const code = data.code;
+            document.getElementById("code-box").textContent = code;
+            document.getElementById("launch-bot").href = `https://t.me/myssea_bot?start=${code}`;
+            document.getElementById("code-section").style.display = "block";
+          } else {
+            alert("Error: no code could be generated.");
+          }
+        })
+        .catch(err => {
+          alert("There was a problem while assigning the code.");
+          console.error(err);
+        });
+    } else {
+      alert("Missing username or team name.");
+    }
+  </script>
+</body>
+</html>
